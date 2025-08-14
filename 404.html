@@ -30,6 +30,13 @@ a:hover { text-decoration: underline; }
 #countdown { font-weight:bold; color:#00bfff; font-size:1.2rem; display:inline-block; animation:pulse 1s infinite; }
 @keyframes pulse {0%{transform:scale(1);}50%{transform:scale(1.05);}100%{transform:scale(1);}}
 
+#jsNotice { 
+  display:none; 
+  margin-top:10px; 
+  font-size:0.9rem; 
+  color:#ff4c4c; 
+}
+
 footer { position:absolute; bottom:15px; font-size:0.9rem; color:inherit; }
 
 #darkToggle {
@@ -54,10 +61,15 @@ footer { position:absolute; bottom:15px; font-size:0.9rem; color:inherit; }
   You will be redirected back to the <a href="https://kebaab.eu">main page</a> in 
   <span id="countdown">10</span> <span id="secText">seconds</span>.
 </p>
+
+<p id="jsNotice">
+  ⚠️ JavaScript appears to be disabled. Some features of this site may not work properly. You will still be redirected in 10 seconds.
+</p>
+
 <footer><span id="year"></span> © kebaab.eu</footer>
 
 <script>
-// Countdown with JS enhancement
+// Countdown
 let seconds = 10;
 const countdownEl = document.getElementById('countdown');
 const secTextEl = document.getElementById('secText');
@@ -86,7 +98,10 @@ darkToggle.addEventListener('click',()=>{
 </script>
 
 <noscript>
-<p>Redirecting to the <a href="https://kebaab.eu">main page</a> in 10 seconds...</p>
+<style>#countdown,#secText{display:none;}</style>
+<p id="jsNotice" style="display:block;">
+  ⚠️ JavaScript appears to be disabled. Some features of this site may not work properly. You will be redirected to the <a href="https://kebaab.eu">main page</a> in 10 seconds.
+</p>
 </noscript>
 </body>
 </html>
