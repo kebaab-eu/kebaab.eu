@@ -2,15 +2,19 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Redirecting…</title>
-  <!-- Meta refresh for non-JS users -->
-  <meta http-equiv="refresh" content="0;url=mailto:samuel.capay@outlook.com">
-  <!-- JS redirect for faster navigation -->
+  <title>Opening Mail…</title>
   <script>
-    location.replace("mailto:samuel.capay@outlook.com");
+    // Try to open mail client
+    window.location.href = "mailto:samuel.capay@outlook.com";
+
+    // Attempt to close the tab
+    setTimeout(function() {
+      window.open('', '_self'); // Some browsers need this trick
+      window.close();
+    }, 100); // small delay to allow mail client to open
   </script>
 </head>
 <body>
-  <p>Redirecting… If you are not redirected, <a href="mailto:samuel.capay@outlook.com">click here</a>.</p>
+  <p>If your mail client doesn't open, <a href="mailto:samuel.capay@outlook.com">click here</a>.</p>
 </body>
 </html>
