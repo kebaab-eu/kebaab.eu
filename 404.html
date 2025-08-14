@@ -1,103 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="10;url=https://kebaab.eu">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>404 - Page Not Found</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="10;url=https://kebaab.eu">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 - Page Not Found</title>
+<style>
+* {margin:0; padding:0; box-sizing:border-box; font-family:'Helvetica Neue', Arial, sans-serif;}
+body {
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  overflow:hidden;
+  background:linear-gradient(135deg, #fdfbfb, #ebedee);
+  color:#333;
+  text-align:center;
+  position:relative;
+  transition: background 0.8s ease, color 0.8s ease;
+}
+body.dark { background:#121212; color:#ddd; }
 
-    body {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: linear-gradient(135deg, #f9f9f9, #e0e0e0);
-      color: #333;
-      text-align: center;
-      overflow: hidden;
-    }
+h1 { font-size:6rem; margin-bottom:20px; color:#ff4c4c; }
+p { font-size:1.3rem; margin-bottom:30px; color:inherit; line-height:1.5; }
+a { color:#0077cc; text-decoration:none; font-weight:bold; }
+a:hover { text-decoration: underline; }
 
-    h1 {
-      font-size: 5rem;
-      margin-bottom: 20px;
-      color: #ff4c4c;
-      animation: bounce 1s infinite alternate;
-    }
+#countdown { font-weight:bold; color:#00bfff; font-size:1.2rem; display:inline-block; animation:pulse 1s infinite; }
+@keyframes pulse {0%{transform:scale(1);}50%{transform:scale(1.05);}100%{transform:scale(1);}}
 
-    p {
-      font-size: 1.2rem;
-      margin-bottom: 30px;
-      color: #555;
-    }
+footer { position:absolute; bottom:15px; font-size:0.9rem; color:inherit; }
 
-    a {
-      color: #0077cc;
-      text-decoration: none;
-      font-weight: bold;
-    }
+#darkToggle {
+  position:absolute;
+  top:15px; right:15px;
+  font-size:1.8rem;
+  cursor:pointer;
+  user-select:none;
+  transition: transform 0.2s;
+}
+#darkToggle:hover { transform:scale(1.2); }
 
-    a:hover {
-      text-decoration: underline;
-    }
-
-    #countdown {
-      font-weight: bold;
-      color: #0077cc;
-    }
-
-    footer {
-      position: absolute;
-      bottom: 15px;
-      font-size: 0.9rem;
-      color: #888;
-    }
-
-    @keyframes bounce {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-10px); }
-    }
-  </style>
+@media(max-width:600px){ h1{font-size:4rem;} p{font-size:1rem;} }
+</style>
 </head>
 <body>
-  <h1>404</h1>
-  <p>
-    The page you tried to reach doesn't exist, or was deleted.<br>
-    You will be redirected back to the <a href="https://kebaab.eu">main page</a> in 
-    <span id="countdown">10</span> seconds.
-  </p>
-  <footer>&copy; <span id="year">kebaab.eu</span></footer>
+<div id="darkToggle">🌙</div>
 
-  <script>
-    // Countdown logic (enhances the meta refresh for JS users)
-    let seconds = 10;
-    const countdownEl = document.getElementById('countdown');
+<h1>404</h1>
+<p>
+  The page you tried to reach doesn't exist, or was deleted.<br>
+  You will be redirected back to the <a href="https://kebaab.eu">main page</a> in 
+  <span id="countdown">10</span> <span id="secText">seconds</span>.
+</p>
+<footer><span id="year"></span> © kebaab.eu</footer>
 
-    const countdownInterval = setInterval(() => {
-      seconds--;
-      countdownEl.textContent = seconds;
-      if (seconds <= 0) {
-        clearInterval(countdownInterval);
-        window.location.href = 'https://kebaab.eu';
-      }
-    }, 1000);
+<script>
+// Countdown with JS enhancement
+let seconds = 10;
+const countdownEl = document.getElementById('countdown');
+const secTextEl = document.getElementById('secText');
+const countdownInterval = setInterval(()=>{
+  seconds--;
+  countdownEl.textContent = seconds;
+  secTextEl.textContent = seconds===1 ? 'second' : 'seconds';
+  if(seconds<=0){
+    clearInterval(countdownInterval);
+    window.location.href='https://kebaab.eu';
+  }
+},1000);
+document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Update copyright year dynamically
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
+// Dark mode auto
+const body=document.body;
+const darkToggle=document.getElementById('darkToggle');
+const hour=new Date().getHours();
+if(hour>=22 || hour<6){body.classList.add('dark'); darkToggle.textContent='☀️';}
 
-  <noscript>
-    <style>
-      #countdown { display: none; }
-    </style>
-    <p>Redirecting to the <a href="https://kebaab.eu">main page</a> in 10 seconds...</p>
-  </noscript>
+// Manual toggle
+darkToggle.addEventListener('click',()=>{
+  body.classList.toggle('dark');
+  darkToggle.textContent=body.classList.contains('dark') ? '☀️' : '🌙';
+});
+</script>
+
+<noscript>
+<p>Redirecting to the <a href="https://kebaab.eu">main page</a> in 10 seconds...</p>
+</noscript>
 </body>
 </html>
