@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>404 - Page Not Found</title>
   <style>
-    /* Reset some default styles */
     * {
       margin: 0;
       padding: 0;
@@ -20,15 +19,17 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background: linear-gradient(135deg, #f2f2f2, #e6e6e6);
+      background: linear-gradient(135deg, #f9f9f9, #e0e0e0);
       color: #333;
       text-align: center;
+      overflow: hidden;
     }
 
     h1 {
-      font-size: 4rem;
+      font-size: 5rem;
       margin-bottom: 20px;
       color: #ff4c4c;
+      animation: bounce 1s infinite alternate;
     }
 
     p {
@@ -47,18 +48,56 @@
       text-decoration: underline;
     }
 
+    #countdown {
+      font-weight: bold;
+      color: #0077cc;
+    }
+
     footer {
       position: absolute;
       bottom: 15px;
       font-size: 0.9rem;
       color: #888;
     }
+
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-10px); }
+    }
   </style>
 </head>
 <body>
   <h1>404</h1>
-  <p>The page you tried to reach doesn't exist, or was deleted.<br>
-  You will be redirected back to the <a href="https://kebaab.eu">main page</a> in 10 seconds.</p>
-  <footer>&copy; kebaab.eu</footer>
+  <p>
+    The page you tried to reach doesn't exist, or was deleted.<br>
+    You will be redirected back to the <a href="https://kebaab.eu">main page</a> in 
+    <span id="countdown">10</span> seconds.
+  </p>
+  <footer>&copy; <span id="year">kebaab.eu</span></footer>
+
+  <script>
+    // Countdown logic (enhances the meta refresh for JS users)
+    let seconds = 10;
+    const countdownEl = document.getElementById('countdown');
+
+    const countdownInterval = setInterval(() => {
+      seconds--;
+      countdownEl.textContent = seconds;
+      if (seconds <= 0) {
+        clearInterval(countdownInterval);
+        window.location.href = 'https://kebaab.eu';
+      }
+    }, 1000);
+
+    // Update copyright year dynamically
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+  <noscript>
+    <style>
+      #countdown { display: none; }
+    </style>
+    <p>Redirecting to the <a href="https://kebaab.eu">main page</a> in 10 seconds...</p>
+  </noscript>
 </body>
 </html>
