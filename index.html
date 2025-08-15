@@ -1,16 +1,216 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Redirecting…</title>
-  <!-- Meta refresh for non-JS users -->
-  <meta http-equiv="refresh" content="0;url=https://linktr.ee/kebaab">
-  <!-- JS redirect for faster navigation -->
-  <script>
-    location.replace("https://linktr.ee/kebaab");
-  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choose Your Destination</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #1f1f1f, #2c2c2c);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 20px;
+  position: relative;
+}
+.lang-switcher {
+  background-color: #2a2a2a;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 1rem;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.lang-switcher:hover {
+  background-color: #3a3a3a;
+  border-color: #666;
+}
+.lang-switcher option {
+  background-color: #2a2a2a;
+  color: white;
+}
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  text-align: center;
+}
+.choice {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+.card {
+  display: block; /* Changed to block for proper anchor sizing */
+  background: #292929;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  width: 200px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  transition: transform 0.2s ease, background 0.2s ease;
+  text-decoration: none; /* Remove default link underline */
+  color: white; /* Inherit text color */
+}
+.card:hover {
+  transform: translateY(-5px);
+  background: #333;
+}
+.card img {
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-bottom: 15px;
+}
+.card-label {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 10px;
+}
+footer {
+  text-align: center;
+  padding: 15px;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+/* Noscript warning styling */
+noscript {
+  display: block;
+  background-color: #b00020;
+  color: white;
+  padding: 12px 20px;
+  text-align: center;
+  font-weight: bold;
+}
+</style>
 </head>
 <body>
-  <p>Redirecting… If you are not redirected, <a href="https://linktr.ee/kebaab">click here</a>.</p>
+<noscript>
+  JavaScript is disabled in your browser. Some features (like language switching and dynamic year) may not work, and further websites may load incorrectly.
+</noscript>
+
+<header>
+  <select id="languageSwitcher" class="lang-switcher">
+    <option value="en">English</option>
+    <option value="cs">Čeština</option>
+    <option value="sk">Slovenčina</option>
+    <option value="de">Deutsch</option>
+    <option value="ru">Русский</option>
+    <option value="fr">Français</option>
+    <option value="ko">한국어</option>
+  </select>
+</header>
+
+<main>
+  <h1 id="title">Where do you want to go?</h1>
+  <div class="choice">
+    <!-- Entire card is now a clickable link -->
+    <a class="card" href="https://kebaab.eu/linktree">
+      <img src="https://ugc.production.linktr.ee/a39ca232-6bf8-4955-b20f-3de2129cb6ab_Screenshot-2025-04-06-145100.png?io=true&size=avatar-v3_0" alt="Linktree Profile Picture">
+      <span class="card-label" id="linktreeLabel">Linktree</span>
+    </a>
+    
+    <!-- Entire card is now a clickable link -->
+    <a class="card" href="https://kebaab.eu/gravatar">
+      <img src="https://1.gravatar.com/avatar/f696919be8b6c0df1813a948b1b7395e8c486adf13c837956b9e5a7119a93443?size=256&d=initials" alt="Gravatar Profile Picture">
+      <span class="card-label" id="gravatarLabel">Gravatar</span>
+    </a>
+  </div>
+</main>
+
+<footer>
+  <span id="copyright">2025 &copy; kebaab.eu</span>
+</footer>
+
+<script>
+const translations = {
+  en: {
+    title: "Where do you want to go?",
+    linktree: "Linktree",
+    gravatar: "Gravatar",
+    noscript: "JavaScript is disabled in your browser. Some features may not work, and further websites may load incorrectly."
+  },
+  cs: {
+    title: "Kam chcete jít?",
+    linktree: "Linktree",
+    gravatar: "Gravatar",
+    noscript: "JavaScript je ve vašem prohlížeči zakázán. Některé funkce nemusí fungovat a další weby se mohou načítat nesprávně."
+  },
+  sk: {
+    title: "Kam chcete ísť?",
+    linktree: "Linktree",
+    gravatar: "Gravatar",
+    noscript: "JavaScript je vo vašom prehliadači zakázaný. Niektoré funkcie nemusia fungovať a ďalšie weby sa môžu načítať nesprávne."
+  },
+  de: {
+    title: "Wohin möchten Sie gehen?",
+    linktree: "Linktree",
+    gravatar: "Gravatar",
+    noscript: "JavaScript ist in Ihrem Browser deaktiviert. Einige Funktionen funktionieren möglicherweise nicht und weitere Websites könnten fehlerhaft geladen werden."
+  },
+  ru: {
+    title: "Куда вы хотите пойти?",
+    linktree: "Linktree",
+    gravatar: "Gravatar",
+    noscript: "JavaScript отключен в вашем браузере. Некоторые функции могут не работать, и последующие сайты могут загружаться неправильно."
+  },
+  fr: {
+    title: "Où voulez-vous aller ?",
+    linktree: "Linktree",
+    gravatar: "Gravatar",
+    noscript: "JavaScript est désactivé dans votre navigateur. Certaines fonctionnalités peuvent ne pas fonctionner et d'autres sites peuvent mal se charger."
+  },
+  ko: {
+    title: "어디로 가시겠습니까?",
+    linktree: "링크트리",
+    gravatar: "그라바타",
+    noscript: "브라우저에서 JavaScript가 비활성화되어 있습니다. 일부 기능이 작동하지 않을 수 있으며 다른 사이트가 잘못 로드될 수 있습니다."
+  }
+};
+
+const languageSwitcher = document.getElementById("languageSwitcher");
+const title = document.getElementById("title");
+const linktreeLabel = document.getElementById("linktreeLabel");
+const gravatarLabel = document.getElementById("gravatarLabel");
+const copyright = document.getElementById("copyright");
+
+// Detect browser language or fallback to English
+let userLang = navigator.language.slice(0,2);
+if (!translations[userLang]) userLang = "en";
+languageSwitcher.value = userLang;
+updateLanguage(userLang);
+
+languageSwitcher.addEventListener("change", (e) => {
+  updateLanguage(e.target.value);
+});
+
+function updateLanguage(lang) {
+  if (translations[lang]) {
+    title.textContent = translations[lang].title;
+    linktreeLabel.textContent = translations[lang].linktree;
+    gravatarLabel.textContent = translations[lang].gravatar;
+    copyright.innerHTML = `${new Date().getFullYear()} &copy; kebaab.eu`;
+  }
+}
+
+// Set footer year initially for JS users
+copyright.innerHTML = `${new Date().getFullYear()} &copy; kebaab.eu`;
+</script>
 </body>
 </html>
