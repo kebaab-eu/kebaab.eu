@@ -12,6 +12,7 @@
   --header-bg: #2a2a2a;
   --text-color: white;
   --accent-color: #4a9bff;
+  --accent-green: #2ecc71; /* nice green for Linktree */
 }
 
 * {
@@ -137,6 +138,20 @@ h1 {
   background: var(--accent-color);
   opacity: 0;
   transition: opacity 0.3s ease;
+}
+
+/* ==== Linktree specific overrides (same behavior, just green) ==== */
+.card.linktree::after {
+  background: var(--accent-green);
+}
+.card.linktree:hover::after {
+  background: var(--accent-green);
+}
+.card.linktree:hover img {
+  border-color: var(--accent-green);
+}
+.card.linktree:hover .card-label {
+  color: var(--accent-green);
 }
 
 .card img {
@@ -308,7 +323,7 @@ noscript {
   <p class="subtitle" id="subtitle">Select a destination to explore my profiles</p>
   
   <div class="choice">
-    <a class="card" href="https://kebaab.eu/linktree">
+    <a class="card linktree" href="https://kebaab.eu/linktree">
       <img src="https://ugc.production.linktr.ee/a39ca232-6bf8-4955-b20f-3de2129cb6ab_Screenshot-2025-04-06-145100.png?io=true&size=avatar-v3_0" alt="Linktree Profile Picture">
       <span class="card-label" id="linktreeLabel">Linktree</span>
     </a>
