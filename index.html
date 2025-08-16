@@ -150,7 +150,7 @@ h1 {
 .card.linktree:hover img {
   border-color: var(--accent-green);
 }
-.card.linktree:hover .card-label {
+.card.linktree:hover .official-name {
   color: var(--accent-green);
 }
 
@@ -169,16 +169,38 @@ h1 {
   transform: scale(1.05);
 }
 
-.card-label {
+/* Updated card label styles */
+.card-label-container {
+  display: block;
+}
+
+.official-name {
   display: block;
   font-size: 1.5rem;
   font-weight: bold;
-  margin-top: 15px;
   transition: color 0.3s ease;
 }
 
-.card:hover .card-label {
+.translation {
+  display: none; /* Hidden by default */
+  font-size: 0.9rem;
+  color: #888;
+  margin-top: 4px;
+}
+
+/* Show translations for Korean and Japanese */
+.lang-ko .translation,
+.lang-ja .translation,
+.lang-ru .translation {
+  display: block;
+}
+
+/* Hover effects */
+.card:hover .official-name {
   color: var(--accent-color);
+}
+.card:hover .translation {
+  color: #aaa; /* Lighter than default on hover */
 }
 
 /* Footer Styles */
@@ -224,7 +246,7 @@ footer {
     height: 110px;
   }
   
-  .card-label {
+  .official-name {
     font-size: 1.4rem;
   }
 }
@@ -247,7 +269,7 @@ footer {
     height: 100px;
   }
   
-  .card-label {
+  .official-name {
     font-size: 1.3rem;
   }
 }
@@ -325,12 +347,18 @@ noscript {
   <div class="choice">
     <a class="card linktree" href="https://kebaab.eu/linktree">
       <img src="https://ugc.production.linktr.ee/a39ca232-6bf8-4955-b20f-3de2129cb6ab_Screenshot-2025-04-06-145100.png?io=true&size=avatar-v3_0" alt="Linktree Profile Picture">
-      <span class="card-label" id="linktreeLabel">Linktree</span>
+      <div class="card-label-container">
+        <span class="official-name">Linktree</span>
+        <span class="translation" id="linktreeTranslation"></span>
+      </div>
     </a>
     
     <a class="card" href="https://kebaab.eu/gravatar">
       <img src="https://1.gravatar.com/avatar/f696919be8b6c0df1813a948b1b7395e8c486adf13c837956b9e5a7119a93443?size=256&d=initials" alt="Gravatar Profile Picture">
-      <span class="card-label" id="gravatarLabel">Gravatar</span>
+      <div class="card-label-container">
+        <span class="official-name">Gravatar</span>
+        <span class="translation" id="gravatarTranslation"></span>
+      </div>
     </a>
   </div>
 </main>
@@ -376,8 +404,8 @@ const translations = {
   ru: {
     title: "Куда вы хотите пойти?",
     subtitle: "Выберите пункт назначения для просмотра моих профилей",
-    linktree: "Linktree",
-    gravatar: "Gravatar",
+    linktree: "Линктре",
+    gravatar: "Граватар",
     copyright: "© kebaab.eu",
     noscript: "JavaScript отключен в вашем браузере. Некоторые функции могут не работать, и последующие сайты могут загружаться неправильно."
   },
@@ -419,8 +447,8 @@ const translations = {
 const languageSwitcher = document.getElementById("languageSwitcher");
 const title = document.getElementById("title");
 const subtitle = document.getElementById("subtitle");
-const linktreeLabel = document.getElementById("linktreeLabel");
-const gravatarLabel = document.getElementById("gravatarLabel");
+const linktreeTranslation = document.getElementById("linktreeTranslation");
+const gravatarTranslation = document.getElementById("gravatarTranslation");
 const copyright = document.getElementById("copyright");
 const langIndicator = document.getElementById("langIndicator");
 
@@ -449,10 +477,11 @@ function detectLanguage() {
 function updateLanguage(lang) {
   if (translations[lang]) {
     document.documentElement.lang = lang;
+    document.body.className = `lang-${lang}`;
     title.textContent = translations[lang].title;
     subtitle.textContent = translations[lang].subtitle;
-    linktreeLabel.textContent = translations[lang].linktree;
-    gravatarLabel.textContent = translations[lang].gravatar;
+    linktreeTranslation.textContent = translations[lang].linktree;
+    gravatarTranslation.textContent = translations[lang].gravatar;
     copyright.textContent = `${new Date().getFullYear()} ${translations[lang].copyright}`;
     langIndicator.textContent = lang.toUpperCase();
     
