@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Album - Celebrity</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --bg-dark: #121212;
+            --card-dark: #1e1e1e;
+            --header-dark: #1a1a1a;
+            --text-light: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --accent: #8a2be2;
+            --accent-hover: #7329c0;
+            --border-dark: #333;
+        }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        header {
+            background-color: var(--header-dark);
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            position: relative;
+            border-bottom: 1px solid var(--border-dark);
+        }
+        
+        .language-selector {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .lang-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-dark);
+            color: var(--text-light);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .lang-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .photo-card {
+            background: var(--card-dark);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            border: 1px solid var(--border-dark);
+        }
+        
+        .photo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
+        }
+        
+        .image-container {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+        }
+        
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .photo-card img.loaded {
+            opacity: 1;
+        }
+        
+        .photo-card:hover img {
+            transform: scale(1.05);
+        }
+        
+        .loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--accent);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .photo-info {
+            padding: 1.2rem;
+        }
+        
+        .photo-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+        }
+        
+        .photo-info p {
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 100;
+            overflow: auto;
+            padding: 2rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+        
+        .modal-content {
+            background: var(--card-dark);
+            max-width: 900px;
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--border-dark);
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            background: var(--header-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-dark);
+        }
+        
+        .modal-header h2 {
+            font-size: 1.8rem;
+            color: var(--text-light);
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        
+        .close-btn:hover {
+            color: var(--accent);
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .modal-image {
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            min-height: 300px;
+        }
+        
+        .modal-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal-image img.loaded {
+            opacity: 1;
+        }
+        
+        .modal-details h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            border-bottom: 2px solid var(--border-dark);
+            padding-bottom: 0.5rem;
+        }
+        
+        .detail-item {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .detail-icon {
+            margin-right: 12px;
+            font-size: 1.2rem;
+            color: var(--accent);
+            min-width: 24px;
+            text-align: center;
+        }
+        
+        .social-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+        
+        .social-link {
+            display: flex;
+            align-items: center;
+            background: #2a2a2a;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: var(--text-light);
+            transition: background 0.2s ease;
+            border: 1px solid var(--border-dark);
+        }
+        
+        .social-link:hover {
+            background: #3a3a3a;
+        }
+        
+        .social-icon {
+            margin-right: 6px;
+            font-size: 1.1rem;
+        }
+        
+        .instagram { color: #e1306c; }
+        .tiktok { color: #69c9d0; }
+        .website { color: #4285f4; }
+        .map { color: #34a853; }
+        .wikipedia { color: #ffffff; }
+        .facebook { color: #3b5998; }
+        .twitter { color: #1da1f2; }
+        
+        footer {
+            background: #0a0a0a;
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 2rem;
+            border-top: 1px solid var(--border-dark);
+        }
+        
+        .copyright {
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        .homepage-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .homepage-link:hover {
+            color: var(--accent-hover);
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .modal-body {
+                grid-template-columns: 1fr;
+            }
+            
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .modal-header h2 {
+                font-size: 1.4rem;
+            }
+            
+            header {
+                padding: 1.5rem 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="language-selector">
+            <button class="lang-btn active" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="sk">SK</button>
+        </div>
+        <div class="container">
+            <h1 data-translate="title">My Celebrity Encounters</h1>
+            <p class="subtitle" data-translate="subtitle">A collection of photos with famous personalities from around the world</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="gallery" id="photoGallery">
+            <!-- Photos will be dynamically added here -->
+        </div>
+    </div>
+    
+    <div class="modal" id="photoModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Celebrity Name</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <div class="loading-spinner" id="modalSpinner"></div>
+                    <img id="modalImage" src="" alt="Celebrity Photo">
+                </div>
+                <div class="modal-details">
+                    <h3 data-translate="details">Photo Details</h3>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-calendar-alt"></i></div>
+                        <div>
+                            <strong data-translate="date">Date:</strong> <span id="modalDate"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-bullhorn"></i></div>
+                        <div>
+                            <strong data-translate="occasion">Occasion:</strong> <span id="modalOccasion"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <div>
+                            <strong data-translate="location">Location:</strong> 
+                            <a id="modalLocation" target="_blank" class="social-link map">
+                                <span class="social-icon"><i class="fas fa-map-marked-alt"></i></span>
+                                <span id="locationText"></span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-share-alt"></i></div>
+                        <div>
+                            <strong data-translate="social">Social Media:</strong>
+                            <div class="social-links" id="socialLinks">
+                                <!-- Social links will be added here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p class="copyright" data-translate="copyright">&copy; 2025 All images are under copyright. When sharing, please properly link to the original owner.</p>
+            <p><a href="https://kebaab.eu" class="homepage-link" data-translate="homepage">The Homepage (kebaab.eu)</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Translation data
+        const translations = {
+            en: {
+                title: "My Celebrity Encounters",
+                subtitle: "A collection of photos with famous personalities",
+                details: "Photo Details",
+                date: "Date:",
+                occasion: "Occasion:",
+                location: "Location:",
+                social: "Social Media:",
+                copyright: "© 2025 All images are under copyright. When sharing, please properly link to the original owner.",
+                homepage: "The Homepage (kebaab.eu)"
+            },
+            sk: {
+                title: "Moje stretnutia s celebritami",
+                subtitle: "Zbierka fotografií so známymi osobnosťami",
+                details: "Detaily fotografie",
+                date: "Dátum:",
+                occasion: "Príležitosť:",
+                location: "Miesto:",
+                social: "Sociálne siete:",
+                copyright: "© 2025 Všetky obrázky sú chránené autorskými právami. Pri zdieľaní správne odkazujte na pôvodného vlastníka.",
+                homepage: "Domovská stránka (kebaab.eu)"
+            }
+        };
+
+        const photoData = [
+            {
+                id: 1,
+                title: "Andrej Danko",
+                imageSrc: "https://1drv.ms/i/c/ea935ffc8e3319c3/IQSjzurz-vIoRrcmZT8Tr-PsATEqSbh3HGfO6P5UfreDetA?width=1542&height=2048",
+                date: "30 August 2025",
+                occasion_en: "Open Day",
+                occasion_sk: "Deň otvorených dverí",
+                location: "Bratislavský hrad, Bratislava, SK",
+                locationUrl: "https://maps.app.goo.gl/PuCuZUvNhxScJnge6",
+                instagram: "andrej_danko_official",
+                tiktok: "andrejdanko128",
+                website: "https://sns.sk",
+                wikipedia: "https://sk.wikipedia.org/wiki/Andrej_Danko",
+                facebook: "andrejdanko.sk",
+                twitter: "AndrejDanko6"
+            },
+            {
+                id: 2,
+                title: "Viktor Serebryakov",
+                imageSrc: "https://1drv.ms/i/c/ea935ffc8e3319c3/IQRPaADueeC8SbS0KaP6hOskAYd8QklagPPiy3OksjF4PtE?width=1542&height=2048",
+                date: "30 August 2025",
+                occasion_en: "Open Day",
+                occasion_sk: "Deň otvorených dverí",
+                location: "Bratislavský hrad, Bratislava, SK",
+                locationUrl: "https://maps.app.goo.gl/PuCuZUvNhxScJnge6",
+                instagram: "rusky_macko",
+                tiktok: "",
+                website: "https://tvnoviny.sk/autor/128-viktor-serebryakov",
+                wikipedia: "",
+                facebook: "",
+                twitter: ""
+            },
+            {
+                id: 3,
+                title: "Tomáš Csicsó",
+                imageSrc: "https://1drv.ms/i/c/ea935ffc8e3319c3/IQRrJc9l_wiiQ7fjpAS-1jopAWj9moezr3Z22isIMHLjkvE?width=1542&height=2048",
+                date: "30 August 2025",
+                occasion_en: "Open Day",
+                occasion_sk: "Deň otvorených dverí",
+                location: "Bratislavský hrad, Bratislava, SK",
+                locationUrl: "https://maps.app.goo.gl/PuCuZUvNhxScJnge6",
+                instagram: "tomi_1990_2_7",
+                tiktok: "tomas.csicso",
+                website: "https://blog.sme.sk/tomascsicso",
+                wikipedia: "",
+                facebook: "",
+                twitter: ""
+            },
+            {
+                id: 4,
+                title: "Michal Šimečka",
+                imageSrc: "https://1drv.ms/i/c/ea935ffc8e3319c3/IQQJfcakGwR1SYusAo90awlqAWBJwr2S1lmZEemnkoivALY?width=1542&height=2048",
+                date: "30 August 2025",
+                occasion_en: "Open Day",
+                occasion_sk: "Deň otvorených dverí",
+                location: "Bratislavský hrad, Bratislava, SK",
+                locationUrl: "https://maps.app.goo.gl/PuCuZUvNhxScJnge6",
+                instagram: "michalsimecka",
+                tiktok: "michalsimecka",
+                website: "https://progresivne.sk",
+                wikipedia: "https://sk.wikipedia.org/wiki/Michal_%C5%A0ime%C4%8Dka",
+                facebook: "miso.simecka",
+                twitter: "msimecka"
+            }
+        ];
+
+        // Function to change language
+        function changeLanguage(lang) {
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            
+            // Update active button state
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+            });
+            
+            // Update occasion text in gallery
+            updateGalleryOccasions(lang);
+            
+            // Update occasion text in modal if it's open
+            const modal = document.getElementById('photoModal');
+            if (modal.classList.contains('show')) {
+                const currentPhotoId = parseInt(modal.dataset.currentPhotoId);
+                const currentPhoto = photoData.find(photo => photo.id === currentPhotoId);
+                if (currentPhoto) {
+                    document.getElementById('modalOccasion').textContent = 
+                        lang === 'sk' ? currentPhoto.occasion_sk : currentPhoto.occasion_en;
+                }
+            }
+            
+            // Store language preference
+            localStorage.setItem('preferredLanguage', lang);
+        }
+
+        // Function to update occasions in gallery
+        function updateGalleryOccasions(lang) {
+            const gallery = document.getElementById('photoGallery');
+            const cards = gallery.querySelectorAll('.photo-card');
+            
+            cards.forEach(card => {
+                const photoId = parseInt(card.dataset.id);
+                const photo = photoData.find(p => p.id === photoId);
+                
+                if (photo) {
+                    const occasionElement = card.querySelector('.photo-info p');
+                    occasionElement.innerHTML = `${photo.date} • ${lang === 'sk' ? photo.occasion_sk : photo.occasion_en}`;
+                }
+            });
+        }
+
+        // Function to generate gallery items
+        function generateGallery() {
+            const gallery = document.getElementById('photoGallery');
+            gallery.innerHTML = '';
+            
+            const currentLang = getCurrentLanguage();
+            
+            photoData.forEach(photo => {
+                const card = document.createElement('div');
+                card.className = 'photo-card';
+                card.dataset.id = photo.id;
+                
+                card.innerHTML = `
+                    <div class="image-container">
+                        <div class="loading-spinner"></div>
+                        <img src="${photo.imageSrc}" alt="Photo with ${photo.title}" 
+                             onload="this.classList.add('loaded'); this.previousElementSibling.style.display='none';">
+                    </div>
+                    <div class="photo-info">
+                        <h3>${photo.title}</h3>
+                        <p>${photo.date} • ${currentLang === 'sk' ? photo.occasion_sk : photo.occasion_en}</p>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => openModal(photo));
+                gallery.appendChild(card);
+                
+                // If image fails to load, keep the spinner visible
+                const img = card.querySelector('img');
+                img.addEventListener('error', function() {
+                    this.previousElementSibling.style.display = 'block';
+                });
+            });
+        }
+
+        // Get current language
+        function getCurrentLanguage() {
+            return localStorage.getItem('preferredLanguage') || 'en';
+        }
+
+        // Function to open modal with photo details
+        function openModal(photo) {
+            const modal = document.getElementById('photoModal');
+            const socialLinks = document.getElementById('socialLinks');
+            const modalImage = document.getElementById('modalImage');
+            const modalSpinner = document.getElementById('modalSpinner');
+            
+            // Show spinner in modal
+            modalSpinner.style.display = 'block';
+            modalImage.classList.remove('loaded');
+            
+            // Store current photo ID in modal for language updates
+            modal.dataset.currentPhotoId = photo.id;
+            
+            // Set basic info
+            document.getElementById('modalTitle').textContent = photo.title;
+            document.getElementById('modalDate').textContent = photo.date;
+            
+            // Set occasion based on current language
+            const currentLang = getCurrentLanguage();
+            document.getElementById('modalOccasion').textContent = 
+                currentLang === 'sk' ? photo.occasion_sk : photo.occasion_en;
+                
+            document.getElementById('locationText').textContent = photo.location;
+            
+            // Set location link
+            const locationLink = document.getElementById('modalLocation');
+            locationLink.href = photo.locationUrl;
+            
+            // Clear previous social links
+            socialLinks.innerHTML = '';
+            
+            // Add social links if they exist
+            if (photo.instagram) {
+                socialLinks.innerHTML += `
+                    <a href="https://instagram.com/${photo.instagram}" target="_blank" class="social-link">
+                        <span class="social-icon instagram"><i class="fab fa-instagram"></i></span>
+                        @${photo.instagram}
+                    </a>
+                `;
+            }
+            
+            if (photo.tiktok) {
+                socialLinks.innerHTML += `
+                    <a href="https://tiktok.com/@${photo.tiktok}" target="_blank" class="social-link">
+                        <span class="social-icon tiktok"><i class="fab fa-tiktok"></i></span>
+                        @${photo.tiktok}
+                    </a>
+                `;
+            }
+            
+            if (photo.website) {
+                // Extract domain from URL
+                const domain = photo.website.replace(/^https?:\/\//, '').split('/')[0];
+                socialLinks.innerHTML += `
+                    <a href="${photo.website}" target="_blank" class="social-link">
+                        <span class="social-icon website"><i class="fas fa-globe"></i></span>
+                        ${domain}
+                    </a>
+                `;
+            }
+            
+            // Add Wikipedia link if it exists
+            if (photo.wikipedia) {
+                socialLinks.innerHTML += `
+                    <a href="${photo.wikipedia}" target="_blank" class="social-link">
+                        <span class="social-icon wikipedia"><i class="fab fa-wikipedia-w"></i></span>
+                        Wikipedia
+                    </a>
+                `;
+            }
+            
+            // Add Facebook link if it exists
+            if (photo.facebook) {
+                socialLinks.innerHTML += `
+                    <a href="https://facebook.com/${photo.facebook}" target="_blank" class="social-link">
+                        <span class="social-icon facebook"><i class="fab fa-facebook"></i></span>
+                        ${photo.facebook}
+                    </a>
+                `;
+            }
+            
+            // Add Twitter/X link if it exists
+            if (photo.twitter) {
+                socialLinks.innerHTML += `
+                    <a href="https://x.com/${photo.twitter}" target="_blank" class="social-link">
+                        <span class="social-icon twitter">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/0/0a/X_logo_2023_%28white%29.svg" 
+                                 alt="X Logo" 
+                                 style="width: 16px; height: 16px;">
+                        </span>
+                        @${photo.twitter}
+                    </a>
+                `;
+            }
+            
+            // Load the modal image
+            modalImage.src = photo.imageSrc;
+            modalImage.alt = `Photo with ${photo.title}`;
+            
+            // Show modal
+            modal.classList.add('show');
+        }
+
+        // Close modal function
+        function setupModalClose() {
+            const modal = document.getElementById('photoModal');
+            const closeBtn = document.getElementById('closeModal');
+            
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('show');
+            });
+            
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
+        }
+
+        // Initialize the gallery when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set language based on preference or default to English
+            const preferredLanguage = localStorage.getItem('preferredLanguage') || 'sk';
+            changeLanguage(preferredLanguage);
+            
+            // Set up language switcher
+            document.querySelectorAll('.lang-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    changeLanguage(button.getAttribute('data-lang'));
+                });
+            });
+            
+            generateGallery();
+            setupModalClose();
+            
+            // Handle modal image loading
+            const modalImage = document.getElementById('modalImage');
+            const modalSpinner = document.getElementById('modalSpinner');
+            
+            modalImage.addEventListener('load', function() {
+                this.classList.add('loaded');
+                modalSpinner.style.display = 'none';
+            });
+            
+            modalImage.addEventListener('error', function() {
+                modalSpinner.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
