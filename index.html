@@ -360,6 +360,14 @@ noscript {
         <span class="translation" id="gravatarTranslation"></span>
       </div>
     </a>
+
+    <a class="card" href="https://kebaab.eu/album/celebrities/">
+      <img src="https://kebaab.eu/album/celebrities/cover.jpg" alt="Celebrity Album Cover">
+      <div class="card-label-container">
+        <span class="official-name">Album</span>
+        <span class="translation" id="albumTranslation"></span>
+      </div>
+    </a>
   </div>
 </main>
 
@@ -374,6 +382,7 @@ const translations = {
     subtitle: "Select a destination to explore my profiles",
     linktree: "Linktree",
     gravatar: "Gravatar",
+    album: "Album",
     copyright: "© kebaab.eu",
     noscript: "JavaScript is disabled in your browser. Some features may not work, and further websites may load incorrectly."
   },
@@ -382,6 +391,7 @@ const translations = {
     subtitle: "Vyberte si cíl pro prozkoumání mých profilů",
     linktree: "Linktree",
     gravatar: "Gravatar",
+    album: "Album",
     copyright: "© kebaab.eu",
     noscript: "JavaScript je ve vašem prohlížeči zakázán. Některé funkce nemusí fungovat a další weby se mohou načítat nesprávně."
   },
@@ -390,6 +400,7 @@ const translations = {
     subtitle: "Vyberte si cieľ na preskúmanie mojich profilov",
     linktree: "Linktree",
     gravatar: "Gravatar",
+    album: "Album",
     copyright: "© kebaab.eu",
     noscript: "JavaScript je vo vašom prehliadači zakázaný. Niektoré funkcie nemusia fungovať a ďalšie weby sa môžu načítať nesprávne."
   },
@@ -398,6 +409,7 @@ const translations = {
     subtitle: "Wählen Sie ein Ziel, um meine Profile zu erkunden",
     linktree: "Linktree",
     gravatar: "Gravatar",
+    album: "Album",
     copyright: "© kebaab.eu",
     noscript: "JavaScript ist in Ihrem Browser deaktiviert. Einige Funktionen funktionieren möglicherweise nicht und weitere Websites könnten fehlerhaft geladen werden."
   },
@@ -406,6 +418,7 @@ const translations = {
     subtitle: "Выберите пункт назначения для просмотра моих профилей",
     linktree: "Линктре",
     gravatar: "Граватар",
+    album: "Альбом",
     copyright: "© kebaab.eu",
     noscript: "JavaScript отключен в вашем браузере. Некоторые функции могут не работать, и последующие сайты могут загружаться неправильно."
   },
@@ -414,6 +427,7 @@ const translations = {
     subtitle: "Sélectionnez une destination pour explorer mes profils",
     linktree: "Linktree",
     gravatar: "Gravatar",
+    album: "Album",
     copyright: "© kebaab.eu",
     noscript: "JavaScript est désactivé dans votre navigateur. Certaines fonctionnalités peuvent ne pas fonctionner et d'autres sites peuvent mal se charger."
   },
@@ -422,6 +436,7 @@ const translations = {
     subtitle: "내 프로필을 탐색할 대상을 선택하세요",
     linktree: "링크트리",
     gravatar: "그라바타",
+    album: "앨범",
     copyright: "© kebaab.eu",
     noscript: "브라우저에서 JavaScript가 비활성화되어 있습니다. 일부 기능이 작동하지 않을 수 있으며 다른 사이트가 잘못 로드될 수 있습니다."
   },
@@ -430,6 +445,7 @@ const translations = {
     subtitle: "Selecciona un destino para explorar mis perfiles",
     linktree: "Linktree",
     gravatar: "Gravatar",
+    album: "Álbum",
     copyright: "© kebaab.eu",
     noscript: "JavaScript está desactivado en tu navegador. Es posible que algunas funciones no funcionen y otros sitios se carguen incorrectamente."
   },
@@ -438,6 +454,7 @@ const translations = {
     subtitle: "プロフィールを探索する目的地を選択してください",
     linktree: "リンクトリー",
     gravatar: "グラバター",
+    album: "アルバム",
     copyright: "© kebaab.eu",
     noscript: "ブラウザでJavaScriptが無効になっています。一部の機能が動作しない可能性があり、他のサイトが正しく読み込まれない場合があります。"
   }
@@ -449,6 +466,7 @@ const title = document.getElementById("title");
 const subtitle = document.getElementById("subtitle");
 const linktreeTranslation = document.getElementById("linktreeTranslation");
 const gravatarTranslation = document.getElementById("gravatarTranslation");
+const albumTranslation = document.getElementById("albumTranslation");
 const copyright = document.getElementById("copyright");
 const langIndicator = document.getElementById("langIndicator");
 
@@ -482,6 +500,7 @@ function updateLanguage(lang) {
     subtitle.textContent = translations[lang].subtitle;
     linktreeTranslation.textContent = translations[lang].linktree;
     gravatarTranslation.textContent = translations[lang].gravatar;
+    albumTranslation.textContent = translations[lang].album;
     copyright.textContent = `${new Date().getFullYear()} ${translations[lang].copyright}`;
     langIndicator.textContent = lang.toUpperCase();
     
