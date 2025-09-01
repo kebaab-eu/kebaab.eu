@@ -11,7 +11,8 @@
   --card-hover: #333;
   --header-bg: #2a2a2a;
   --text-color: white;
-  --accent-color: #4a9bff;
+  --accent-color: #ffffff;
+  --accent-blue: #4a9bff;
   --accent-green: #2ecc71; /* nice green for Linktree */
 }
 
@@ -154,6 +155,20 @@ h1 {
   color: var(--accent-green);
 }
 
+/* ==== Gravatar specific overrides (same behavior, just green) ==== */
+.card.gravatar::after {
+  background: var(--accent-blue);
+}
+.card.gravatar:hover::after {
+  background: var(--accent-blue);
+}
+.card.gravatar:hover img {
+  border-color: var(--accent-blue);
+}
+.card.gravatar:hover .official-name {
+  color: var(--accent-blue);
+}
+  
 .card img {
   border-radius: 50%;
   width: 130px;
@@ -353,7 +368,7 @@ noscript {
       </div>
     </a>
     
-    <a class="card" href="https://kebaab.eu/gravatar">
+    <a class="card gravatar" href="https://kebaab.eu/gravatar">
       <img src="https://1.gravatar.com/avatar/f696919be8b6c0df1813a948b1b7395e8c486adf13c837956b9e5a7119a93443?size=256&d=initials" alt="Gravatar Profile Picture">
       <div class="card-label-container">
         <span class="official-name">Gravatar</span>
@@ -361,7 +376,7 @@ noscript {
       </div>
     </a>
 
-    <a class="card" href="https://kebaab.eu/album/celebrities/">
+    <a class="card album" href="https://kebaab.eu/album/celebrities/">
       <img src="https://kebaab.eu/album/celebrities/cover.png" alt="Celebrity Album Cover">
       <div class="card-label-container">
         <span class="official-name">Album</span>
