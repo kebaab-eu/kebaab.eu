@@ -29,6 +29,7 @@
             color: var(--text-light);
             line-height: 1.6;
             min-height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scroll on body */
         }
         
         header {
@@ -180,8 +181,10 @@
         .modal.show {
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* Changed from center to flex-start */
             opacity: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
         }
         
         .modal-content {
@@ -193,6 +196,7 @@
             position: relative;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
             border: 1px solid var(--border-dark);
+            margin: 2rem auto; /* Added margin for better spacing */
         }
         
         .modal-header {
@@ -202,6 +206,9 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border-dark);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
         
         .modal-header h2 {
@@ -216,6 +223,8 @@
             font-size: 1.8rem;
             cursor: pointer;
             transition: color 0.2s ease;
+            flex-shrink: 0;
+            margin-left: 1rem;
         }
         
         .close-btn:hover {
@@ -227,6 +236,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1.5rem;
+            overflow: visible;
         }
         
         .modal-image {
@@ -234,10 +244,14 @@
             overflow: hidden;
             position: relative;
             min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #0a0a0a;
         }
         
         .modal-image img {
-            width: 100%;
+            max-width: 100%;
             height: auto;
             display: block;
             opacity: 0;
@@ -331,6 +345,13 @@
             text-decoration: underline;
         }
         
+        /* New styles for improved mobile experience */
+        .modal-scroll-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        
         @media (max-width: 768px) {
             .modal-body {
                 grid-template-columns: 1fr;
@@ -350,6 +371,87 @@
             
             h1 {
                 font-size: 2rem;
+            }
+            
+            .modal {
+                padding: 0.5rem;
+            }
+            
+            .modal-content {
+                margin: 1rem auto;
+            }
+            
+            .modal-header {
+                padding: 1rem;
+                position: relative;
+            }
+            
+            .modal-body {
+                padding: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .modal-content {
+                border-radius: 8px;
+            }
+            
+            .modal-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .modal-header h2 {
+                margin-bottom: 0.5rem;
+                font-size: 1.2rem;
+            }
+            
+            .close-btn {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+            }
+            
+            .social-links {
+                flex-direction: column;
+            }
+            
+            .social-link {
+                width: 100%;
+            }
+        }
+        
+        /* High zoom support */
+        @media (min-width: 2000px) {
+            .container {
+                max-width: 1800px;
+            }
+            
+            .modal-content {
+                max-width: 1600px;
+            }
+            
+            .modal-body {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .modal-image {
+                min-height: 500px;
+            }
+        }
+        
+        /* Prevent horizontal scrolling on very narrow screens */
+        @media (max-width: 350px) {
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal {
+                padding: 0.25rem;
+            }
+            
+            .modal-content {
+                margin: 0.5rem auto;
             }
         }
     </style>
@@ -373,50 +475,52 @@
     </div>
     
     <div class="modal" id="photoModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">Celebrity Name</h2>
-                <button class="close-btn" id="closeModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-image">
-                    <div class="loading-spinner" id="modalSpinner"></div>
-                    <img id="modalImage" src="" alt="Celebrity Photo">
+        <div class="modal-scroll-container">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Celebrity Name</h2>
+                    <button class="close-btn" id="closeModal">&times;</button>
                 </div>
-                <div class="modal-details">
-                    <h3 data-translate="details">Photo Details</h3>
-                    
-                    <div class="detail-item">
-                        <div class="detail-icon"><i class="fas fa-calendar-alt"></i></div>
-                        <div>
-                            <strong data-translate="date">Date:</strong> <span id="modalDate"></span>
-                        </div>
+                <div class="modal-body">
+                    <div class="modal-image">
+                        <div class="loading-spinner" id="modalSpinner"></div>
+                        <img id="modalImage" src="" alt="Celebrity Photo">
                     </div>
-                    
-                    <div class="detail-item">
-                        <div class="detail-icon"><i class="fas fa-bullhorn"></i></div>
-                        <div>
-                            <strong data-translate="occasion">Occasion:</strong> <span id="modalOccasion"></span>
+                    <div class="modal-details">
+                        <h3 data-translate="details">Photo Details</h3>
+                        
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-calendar-alt"></i></div>
+                            <div>
+                                <strong data-translate="date">Date:</strong> <span id="modalDate"></span>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="detail-item">
-                        <div class="detail-icon"><i class="fas fa-map-marker-alt"></i></div>
-                        <div>
-                            <strong data-translate="location">Location:</strong> 
-                            <a id="modalLocation" target="_blank" class="social-link map">
-                                <span class="social-icon"><i class="fas fa-map-marked-alt"></i></span>
-                                <span id="locationText"></span>
-                            </a>
+                        
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-bullhorn"></i></div>
+                            <div>
+                                <strong data-translate="occasion">Occasion:</strong> <span id="modalOccasion"></span>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="detail-item">
-                        <div class="detail-icon"><i class="fas fa-share-alt"></i></div>
-                        <div>
-                            <strong data-translate="social">Social Media:</strong>
-                            <div class="social-links" id="socialLinks">
-                                <!-- Social links will be added here -->
+                        
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <div>
+                                <strong data-translate="location">Location:</strong> 
+                                <a id="modalLocation" target="_blank" class="social-link map">
+                                    <span class="social-icon"><i class="fas fa-map-marked-alt"></i></span>
+                                    <span id="locationText"></span>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-share-alt"></i></div>
+                            <div>
+                                <strong data-translate="social">Social Media:</strong>
+                                <div class="social-links" id="socialLinks">
+                                    <!-- Social links will be added here -->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -427,7 +531,7 @@
     
     <footer>
         <div class="container">
-            <p class="copyright" data-translate="copyright">&copy; 2025 All images are under copyright. When sharing, please properly link to the original owner.</p>
+            <p class="copyright" data-translate="copyright">&copy; 2025 All photos are owned and protected by copyright. Please credit the author when sharing.</p>
             <p><a href="https://kebaab.eu" class="homepage-link" data-translate="homepage">The Homepage (kebaab.eu)</a></p>
         </div>
     </footer>
@@ -443,7 +547,7 @@
                 occasion: "Occasion:",
                 location: "Location:",
                 social: "Social Media:",
-                copyright: "© 2025 All images are under copyright. When sharing, please properly link to the original owner.",
+                copyright: "© 2025 All photos are owned and protected by copyright. Please credit the author when sharing.",
                 homepage: "The Homepage (kebaab.eu)"
             },
             sk: {
@@ -454,7 +558,7 @@
                 occasion: "Príležitosť:",
                 location: "Miesto:",
                 social: "Sociálne siete:",
-                copyright: "© 2025 Všetky obrázky sú chránené autorskými právami. Pri zdieľaní správne odkazujte na pôvodného vlastníka.",
+                copyright: "© 2025 Všetky fotografie sú vlastnené a chránené autorskými právami. Pri zdieľaní prosím uveďte autora.",
                 homepage: "Domovská stránka (kebaab.eu)"
             }
         };
@@ -717,8 +821,14 @@
             // Show modal
             modal.classList.add('show');
             
+            // Scroll to top of modal
+            modal.scrollTop = 0;
+            
             // Update URL with hash
             window.location.hash = `photo-${photo.id}`;
+            
+            // Prevent body from scrolling when modal is open
+            document.body.style.overflow = 'hidden';
         }
 
         // Close modal function
@@ -728,6 +838,9 @@
             
             // Clear the hash from URL without refreshing
             history.replaceState(null, null, ' ');
+            
+            // Re-enable body scrolling
+            document.body.style.overflow = 'auto';
         }
 
         // Function to handle hash changes
@@ -757,6 +870,13 @@
             
             window.addEventListener('click', (event) => {
                 if (event.target === modal) {
+                    closeModal();
+                }
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && modal.classList.contains('show')) {
                     closeModal();
                 }
             });
