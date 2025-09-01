@@ -716,20 +716,48 @@
             
             // Show modal
             modal.classList.add('show');
+            
+            // Update URL with hash
+            window.location.hash = `photo-${photo.id}`;
         }
 
         // Close modal function
+        function closeModal() {
+            const modal = document.getElementById('photoModal');
+            modal.classList.remove('show');
+            
+            // Clear the hash from URL without refreshing
+            history.replaceState(null, null, ' ');
+        }
+
+        // Function to handle hash changes
+        function handleHashChange() {
+            const hash = window.location.hash.substring(1); // Remove the #
+            
+            if (hash.startsWith('photo-')) {
+                const photoId = parseInt(hash.split('-')[1]);
+                const photo = photoData.find(p => p.id === photoId);
+                
+                if (photo) {
+                    openModal(photo);
+                    return;
+                }
+            }
+            
+            // If hash doesn't match a photo, close the modal
+            closeModal();
+        }
+
+        // Setup modal close handlers
         function setupModalClose() {
             const modal = document.getElementById('photoModal');
             const closeBtn = document.getElementById('closeModal');
             
-            closeBtn.addEventListener('click', () => {
-                modal.classList.remove('show');
-            });
+            closeBtn.addEventListener('click', closeModal);
             
             window.addEventListener('click', (event) => {
                 if (event.target === modal) {
-                    modal.classList.remove('show');
+                    closeModal();
                 }
             });
         }
@@ -762,6 +790,14 @@
             modalImage.addEventListener('error', function() {
                 modalSpinner.style.display = 'block';
             });
+            
+            // Check for hash on page load
+            if (window.location.hash) {
+                handleHashChange();
+            }
+            
+            // Listen for hash changes
+            window.addEventListener('hashchange', handleHashChange);
         });
     </script>
 </body>
