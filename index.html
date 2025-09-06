@@ -487,24 +487,21 @@ const langIndicator = document.getElementById("langIndicator");
 
 // Detect browser language with fallback
 function detectLanguage() {
-  // Try to get from localStorage first
   const savedLang = localStorage.getItem('preferredLang');
   if (savedLang && translations[savedLang]) return savedLang;
-  
-  // Get from browser settings
+
   const browserLang = navigator.language.slice(0,2);
   if (translations[browserLang]) return browserLang;
-  
-  // Check all supported languages
-  const supportedLangs = Object.keys(translations);
+
   for (let lang of navigator.languages) {
     const code = lang.slice(0,2);
-    if (supportedLangs.includes(code)) return code;
+    if (translations[code]) return code;
   }
-  
-  // Fallback to Slovak
+
+  // Default only if no other option applies
   return "sk";
 }
+
 
 // Update UI with translations
 function updateLanguage(lang) {
