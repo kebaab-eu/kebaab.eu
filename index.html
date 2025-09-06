@@ -345,7 +345,7 @@ noscript {
   <select id="languageSwitcher" class="lang-switcher">
     <option value="en">English</option>
     <option value="cs">Čeština</option>
-    <option value="sk">Slovenčina</option>
+    <option value="sk" selected>Slovenčina</option>
     <option value="de">Deutsch</option>
     <option value="ru">Русский</option>
     <option value="fr">Français</option>
@@ -356,8 +356,8 @@ noscript {
 </header>
 
 <main>
-  <h1 id="title">Where do you want to go?</h1>
-  <p class="subtitle" id="subtitle">Select a destination to explore my profiles</p>
+  <h1 id="title">Kam chcete ísť?</h1>
+  <p class="subtitle" id="subtitle">Vyberte si cieľ na preskúmanie mojich profilov</p>
   
   <div class="choice">
     <a class="card linktree" href="https://kebaab.eu/linktree">
@@ -462,7 +462,7 @@ const translations = {
     gravatar: "Gravatar",
     album: "Álbum",
     copyright: "© kebaab.eu",
-    noscript: "JavaScript está desactivado en tu navegador. Es posible que algunas funciones no funcionen y otros sitios se carguen incorrectamente."
+    noscript: "JavaScript está desactivado en tu navegador. Es posible que algunas funciones no funcionen and otros sitios se carguen incorrectamente."
   },
   ja: {
     title: "どこに行きたいですか？",
@@ -481,27 +481,11 @@ const title = document.getElementById("title");
 const subtitle = document.getElementById("subtitle");
 const linktreeTranslation = document.getElementById("linktreeTranslation");
 const gravatarTranslation = document.getElementById("gravatarTranslation");
-const albumTranslation = document.getElementById("albumTranslation");
 const copyright = document.getElementById("copyright");
 const langIndicator = document.getElementById("langIndicator");
 
-// Detect browser language with fallback
-function detectLanguage() {
-  const savedLang = localStorage.getItem('preferredLang');
-  if (savedLang && translations[savedLang]) return savedLang;
-
-  const browserLang = navigator.language.slice(0,2);
-  if (translations[browserLang]) return browserLang;
-
-  for (let lang of navigator.languages) {
-    const code = lang.slice(0,2);
-    if (translations[code]) return code;
-  }
-
-  // Default only if no other option applies
-  return "sk";
-}
-
+// Set Slovak as default
+let currentLang = "sk";
 
 // Update UI with translations
 function updateLanguage(lang) {
@@ -510,32 +494,38 @@ function updateLanguage(lang) {
     document.body.className = `lang-${lang}`;
     title.textContent = translations[lang].title;
     subtitle.textContent = translations[lang].subtitle;
-    linktreeTranslation.textContent = translations[lang].linktree;
-    gravatarTranslation.textContent = translations[lang].gravatar;
-    albumTranslation.textContent = translations[lang].album;
+    
+    if (linktreeTranslation) linktreeTranslation.textContent = translations[lang].linktree;
+    if (gravatarTranslation) gravatarTranslation.textContent = translations[lang].gravatar;
+    
     copyright.textContent = `${new Date().getFullYear()} ${translations[lang].copyright}`;
     langIndicator.textContent = lang.toUpperCase();
     
     // Update language switcher
     languageSwitcher.value = lang;
     
-    // Save preference (disabled)
-    // localStorage.setItem('preferredLang', lang);
+    // Save preference
+    localStorage.setItem('preferredLang', lang);
+    
+    // Update current language
+    currentLang = lang;
   }
 }
 
 // Initialize
 function init() {
-  const lang = detectLanguage();
-  updateLanguage(lang);
+  // Check for saved language preference or default to Slovak
+  const savedLang = localStorage.getItem('preferredLang');
+  if (savedLang && translations[savedLang]) {
+    updateLanguage(savedLang);
+  } else {
+    updateLanguage("sk"); // Default to Slovak
+  }
   
   // Set up language switcher
   languageSwitcher.addEventListener("change", (e) => {
     updateLanguage(e.target.value);
   });
-  
-  // Set footer year
-  copyright.textContent = `${new Date().getFullYear()} ${translations[lang].copyright}`;
 }
 
 // Initialize when DOM is loaded
