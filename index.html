@@ -333,12 +333,30 @@ noscript {
   top: 0;
   z-index: 100;
 }
+
+/* Maintenance warning */
+.maintenance-warning {
+  display: block;
+  background-color: #b00020;
+  color: white;
+  padding: 12px 20px;
+  text-align: center;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
 </style>
 </head>
 <body>
 <noscript>
   JavaScript is disabled in your browser. Some features may not work, and further websites may load incorrectly.
 </noscript>
+
+<!-- Maintenance warning - initially hidden -->
+<div id="maintenanceWarning" class="maintenance-warning" style="display: none;">
+  The website is under maintenance. Some pages may not work or work incorrectly.
+</div>
 
 <header>
   <div class="lang-indicator" id="langIndicator">SK</div>
@@ -399,7 +417,8 @@ const translations = {
     gravatar: "Gravatar",
     album: "Album",
     copyright: "© kebaab.eu",
-    noscript: "JavaScript is disabled in your browser. Some features may not work, and further websites may load incorrectly."
+    noscript: "JavaScript is disabled in your browser. Some features may not work, and further websites may load incorrectly.",
+    maintenance: "The website is under maintenance. Some pages may not work or work incorrectly."
   },
   cs: {
     title: "Kam chcete jít?",
@@ -408,7 +427,8 @@ const translations = {
     gravatar: "Gravatar",
     album: "Album",
     copyright: "© kebaab.eu",
-    noscript: "JavaScript je ve vašem prohlížeči zakázán. Některé funkce nemusí fungovat a další weby se mohou načítat nesprávně."
+    noscript: "JavaScript je ve vašem prohlížeči zakázán. Některé funkce nemusí fungovat a další weby se mohou načítat nesprávně.",
+    maintenance: "Web je v údržbě. Některé stránky nemusí fungovat nebo mohou fungovat nesprávně."
   },
   sk: {
     title: "Kam chcete ísť?",
@@ -417,7 +437,8 @@ const translations = {
     gravatar: "Gravatar",
     album: "Album",
     copyright: "© kebaab.eu",
-    noscript: "JavaScript je vo vašom prehliadači zakázaný. Niektoré funkcie nemusia fungovať a ďalšie weby sa môžu načítať nesprávne."
+    noscript: "JavaScript je vo vašom prehliadači zakázaný. Niektoré funkcie nemusia fungovať a ďalšie weby sa môžu načítať nesprávne.",
+    maintenance: "Web je v údržbe. Niektoré stránky nemusia fungovať alebo môžu fungovať nesprávne."
   },
   de: {
     title: "Wohin möchten Sie gehen?",
@@ -426,7 +447,8 @@ const translations = {
     gravatar: "Gravatar",
     album: "Album",
     copyright: "© kebaab.eu",
-    noscript: "JavaScript ist in Ihrem Browser deaktiviert. Einige Funktionen funktionieren möglicherweise nicht und weitere Websites könnten fehlerhaft geladen werden."
+    noscript: "JavaScript ist in Ihrem Browser deaktiviert. Einige Funktionen funktionieren möglicherweise nicht und weitere Websites könnten fehlerhaft geladen werden.",
+    maintenance: "Die Website wird gewartet. Einige Seiten funktionieren möglicherweise nicht oder nicht richtig."
   },
   ru: {
     title: "Куда вы хотите пойти?",
@@ -435,7 +457,8 @@ const translations = {
     gravatar: "Граватар",
     album: "Альбом",
     copyright: "© kebaab.eu",
-    noscript: "JavaScript отключен в вашем браузере. Некоторые функции могут не работать, и последующие сайты могут загружаться неправильно."
+    noscript: "JavaScript отключен в вашем браузере. Некоторые функции могут не работать, и последующие сайты могут загружаться неправильно.",
+    maintenance: "Сайт находится на техническом обслуживании. Некоторые страницы могут не работать или работать некорректно."
   },
   fr: {
     title: "Où voulez-vous aller ?",
@@ -444,7 +467,8 @@ const translations = {
     gravatar: "Gravatar",
     album: "Album",
     copyright: "© kebaab.eu",
-    noscript: "JavaScript est désactivé dans votre navigateur. Certaines fonctionnalités peuvent ne pas fonctionner et d'autres sites peuvent mal se charger."
+    noscript: "JavaScript est désactivé dans votre navigateur. Certaines fonctionnalités peuvent ne pas fonctionner et d'autres sites peuvent mal se charger.",
+    maintenance: "Le site est en maintenance. Certaines pages peuvent ne pas fonctionner ou fonctionner incorrectement."
   },
   ko: {
     title: "어디로 가시겠습니까?",
@@ -453,7 +477,8 @@ const translations = {
     gravatar: "그라바타",
     album: "앨범",
     copyright: "© kebaab.eu",
-    noscript: "브라우저에서 JavaScript가 비활성화되어 있습니다. 일부 기능이 작동하지 않을 수 있으며 다른 사이트가 잘못 로드될 수 있습니다."
+    noscript: "브라우저에서 JavaScript가 비활성화되어 있습니다. 일부 기능이 작동하지 않을 수 있으며 다른 사이트가 잘못 로드될 수 있습니다.",
+    maintenance: "웹사이트가 유지보수 중입니다. 일부 페이지가 작동하지 않거나 올바르게 작동하지 않을 수 있습니다."
   },
   es: {
     title: "¿A dónde quieres ir?",
@@ -462,7 +487,8 @@ const translations = {
     gravatar: "Gravatar",
     album: "Álbum",
     copyright: "© kebaab.eu",
-    noscript: "JavaScript está desactivado en tu navegador. Es posible que algunas funciones no funcionen and otros sitios se carguen incorrectamente."
+    noscript: "JavaScript está desactivado en tu navegador. Es posible que algunas funciones no funcionen and otros sitios se carguen incorrectamente.",
+    maintenance: "El sitio web está en mantenimiento. Es posible que algunas páginas no funcionen o funcionen incorrectamente."
   },
   ja: {
     title: "どこに行きたいですか？",
@@ -471,7 +497,8 @@ const translations = {
     gravatar: "グラバター",
     album: "アルバム",
     copyright: "© kebaab.eu",
-    noscript: "ブラウザでJavaScriptが無効になっています。一部の機能が動作しない可能性があり、他のサイトが正しく読み込まれない場合があります。"
+    noscript: "ブラウザでJavaScriptが無効になっています。一部の機能が動作しない可能性があり、他のサイトが正しく読み込まれない場合があります。",
+    maintenance: "ウェブサイトはメンテナンス中です。一部のページが機能しない、または正しく機能しない場合があります。"
   }
 };
 
@@ -483,6 +510,7 @@ const linktreeTranslation = document.getElementById("linktreeTranslation");
 const gravatarTranslation = document.getElementById("gravatarTranslation");
 const copyright = document.getElementById("copyright");
 const langIndicator = document.getElementById("langIndicator");
+const maintenanceWarning = document.getElementById("maintenanceWarning");
 
 // Set Slovak as default
 let currentLang = "sk";
@@ -504,11 +532,37 @@ function updateLanguage(lang) {
     // Update language switcher
     languageSwitcher.value = lang;
     
+    // Update maintenance message if shown
+    if (maintenanceWarning.style.display === 'block') {
+      maintenanceWarning.textContent = translations[lang].maintenance;
+    }
+    
     // Save preference
     localStorage.setItem('preferredLang', lang);
     
     // Update current language
     currentLang = lang;
+  }
+}
+
+// Check maintenance status
+async function checkMaintenanceStatus() {
+  try {
+    const response = await fetch('https://kebaab.eu/down.txt', {
+      cache: 'no-store' // Ensure we don't get a cached response
+    });
+    
+    if (response.ok) {
+      const text = await response.text();
+      if (text.trim() === 'true') {
+        // Show maintenance warning
+        maintenanceWarning.textContent = translations[currentLang].maintenance;
+        maintenanceWarning.style.display = 'block';
+      }
+    }
+  } catch (error) {
+    console.error('Failed to check maintenance status:', error);
+    // Don't show maintenance warning if the request fails
   }
 }
 
@@ -526,6 +580,9 @@ function init() {
   languageSwitcher.addEventListener("change", (e) => {
     updateLanguage(e.target.value);
   });
+  
+  // Check maintenance status
+  checkMaintenanceStatus();
 }
 
 // Initialize when DOM is loaded
