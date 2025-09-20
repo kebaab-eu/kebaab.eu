@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choose Your Destination</title>
+<style>
+:root {
+  --primary-bg: linear-gradient(135deg, #1f1f1f, #2c2c2c);
+  --card-bg: #292929;
+  --card-hover: #333;
+  --header-bg: #2a2a2a;
+  --text-color: white;
+  --accent-color: #ffffff;
+  --accent-blue: #4a9bff;
+  --accent-green: #2ecc71;
+  --spotify-green: #1DB954;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--primary-bg);
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* Header Styles */
+header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 15px 20px;
+  position: relative;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.lang-switcher {
+  background-color: var(--header-bg);
+  color: var(--text-color);
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 8px 15px;
+  font-size: 1rem;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 10;
+}
+
+.lang-switcher:hover {
+  background-color: #3a3a3a;
+  border-color: #666;
+}
+
+.lang-switcher option {
+  background-color: var(--header-bg);
+  color: var(--text-color);
+}
+
+/* Main Content */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  text-align: center;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.subtitle {
+  color: #aaa;
+  font-size: 1.1rem;
+  max-width: 600px;
+}
+
+/* Card Container */
+choice {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Card Styles */
+.card {
+  display: block;
+  background: var(--card-bg);
+  border-radius: 15px;
+  padding: 30px 25px;
+  text-align: center;
+  width: 280px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: var(--text-color);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #3a3a3a;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  background: var(--card-hover);
+  box-shadow: 0 12px 20px rgba(0,0,0,0.5);
+  border-color: #555;
+}
+
+.card:hover::after {
+  opacity: 1;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: var(--accent-color);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* ==== Linktree specific overrides (same behavior, just green) ==== */
+.card.linktree::after {
+  background: var(--accent-green);
+}
+.card.linktree:hover::after {
+  background: var(--accent-green);
+}
+.card.linktree:hover img {
+  border-color: var(--accent-green);
+}
+.card.linktree:hover .official-name {
+  color: var(--accent-green);
+}
+
+/* ==== Gravatar specific overrides (same behavior, just green) ==== */
+.card.gravatar::after {
+  background: var(--accent-blue);
+}
+.card.gravatar:hover::after {
+  background: var(--accent-blue);
+}
+.card.gravatar:hover img {
+  border-color: var(--accent-blue);
+}
+.card.gravatar:hover .official-name {
+  color: var(--accent-blue);
+}
+  
+.card img {
+  border-radius: 50%;
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+  margin-bottom: 20px;
+  border: 3px solid #3a3a3a;
+  transition: all 0.3s ease;
+}
+
+.card:hover img {
+  border-color: var(--accent-color);
+  transform: scale(1.05);
+}
+
+/* Updated card label styles */
+.card-label-container {
+  display: block;
+}
+
+.official-name {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.translation {
+  display: none; /* Hidden by default */
+  font-size: 0.9rem;
+  color: #888;
+  margin-top: 4px;
+}
+
+/* Show translations for Korean and Japanese */
+.lang-ko .translation,
+.lang-ja .translation,
+.lang-ru .translation {
+  display: block;
+}
+
+/* Hover effects */
+.card:hover .official-name {
+  color: var(--accent-color);
+}
+.card:hover .translation {
+  color: #aaa; /* Lighter than default on hover */
+}
+
+/* Footer Styles */
+footer {
+  text-align: center;
+  padding: 25px;
+  font-size: 0.9rem;
+  color: #aaa;
+  background: rgba(0, 0, 0, 0.2);
+  margin-top: auto;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  header {
+    justify-content: center;
+    padding: 15px;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+    padding: 0 15px;
+  }
+  
+  .choice {
+    flex-direction: column;
+    gap: 25px;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .card {
+    width: 100%;
+    padding: 25px 20px;
+  }
+  
+  .card img {
+    width: 110px;
+    height: 110px;
+  }
+  
+  .official-name {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  .subtitle {
+    font-size: 0.95rem;
+  }
+  
+  .card {
+    padding: 20px 15px;
+  }
+  
+  .card img {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .official-name {
+    font-size: 1.3rem;
+  }
+}
+
+/* Language Indicator */
+.lang-indicator {
+  position: absolute;
+  top: 15px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  border: 1px solid #444;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+main > * {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.choice {
+  animation-delay: 0.2s;
+}
+
+/* Noscript warning */
+noscript {
+  display: block;
+  background-color: #b00020;
+  color: white;
+  padding: 12px 20px;
+  text-align: center;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Maintenance warning */
+.maintenance-warning {
+  display: block;
+  background-color: #b00020;
+  color: white;
+  padding: 12px 20px;
+  text-align: center;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Spotify Widget Styles */
+#spotify-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+  background: #2b2d31;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  display: none;
+  z-index: 1000;
+  border-left: 4px solid var(--spotify-green);
+}
+
+.spotify-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  color: var(--spotify-green);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.spotify-header svg {
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+  fill: var(--spotify-green);
+}
+
+.spotify-content {
+  display: flex;
+  align-items: center;
+}
+
+.spotify-album-art {
+  width: 60px;
+  height: 60px;
+  border-radius: 4px;
+  margin-right: 12px;
+  object-fit: cover;
+}
+
+.spotify-track-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.spotify-track-name {
+  font-weight: bold;
+  font-size: 14px;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+
+.spotify-artist-name {
+  font-size: 12px;
+  color: #b3b3b3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+
+.spotify-context {
+  font-size: 11px;
+  color: #72767d;
+  display: flex;
+  align-items: center;
+}
+
+.spotify-context-type {
+  text-transform: capitalize;
+  margin-right: 4px;
+}
+
+.spotify-context-name {
+  color: #b3b3b3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spotify-progress {
+  height: 4px;
+  background: #40444b;
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.spotify-progress-bar {
+  height: 100%;
+  background: var(--spotify-green);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 1s linear;
+}
+
+.spotify-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: #72767d;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.spotify-close:hover {
+  color: white;
+}
+
+.spotify-error {
+  color: #ff6b6b;
+  font-size: 12px;
+  margin-top: 8px;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  #spotify-widget {
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+  }
+}
+</style>
+</head>
+<body>
+<noscript>
+  JavaScript is disabled in your browser. Some features may not work, and further websites may load incorrectly.
+</noscript>
+
+<!-- Maintenance warning - initially hidden -->
+<div id="maintenanceWarning" class="maintenance-warning" style="display: none;">
+  The website is under maintenance. Some pages may not work or work incorrectly.
+</div>
+
+<header>
+  <div class="lang-indicator" id="langIndicator">SK</div>
+  <select id="languageSwitcher" class="lang-switcher">
+    <option value="en">English</option>
+    <option value="cs">Čeština</option>
+    <option value="sk" selected>Slovenčina</option>
+    <option value="de">Deutsch</option>
+    <option value="ru">Русский</option>
+    <option value="fr">Français</option>
+    <option value="ko">한국어</option>
+    <option value="es">Español</option>
+    <option value="ja">日本語</option>
+  </select>
+</header>
+
+<main>
+  <h1 id="title">Kam chcete ísť?</h1>
+  <p class="subtitle" id="subtitle">Vyberte si cieľ na preskúmanie mojich profilov</p>
+  
+  <div class="choice">
+    <a class="card linktree" href="https://kebaab.eu/linktree">
+      <img src="https://ugc.production.linktr.ee/a00ea38e-9545-44c1-a7f8-ea813ddae5d8_Screenshot-2025-09-06-12-10-34-58-680d03679600f7af0b4c700c6b270fe7.jpeg?io=true&amp;size=avatar-v3_0" alt="Linktree Profile Picture">
+      <div class="card-label-container">
+        <span class="official-name">Linktree</span>
+        <span class="translation" id="linktreeTranslation"></span>
+      </div>
+    </a>
+    
+    <a class="card gravatar" href="https://kebaab.eu/gravatar">
+      <img src="https://1.gravatar.com/avatar/f696919be8b6c0df1813a948b1b7395e8c486adf13c837956b9e5a7119a93443?size=256&d=initials" alt="Gravatar Profile Picture">
+      <div class="card-label-container">
+        <span class="official-name">Gravatar</span>
+        <span class="translation" id="gravatarTranslation"></span>
+      </div>
+    </a>
+  </div>
+</main>
+
+<footer>
+  <span id="copyright">2025 &copy; kebaab.eu</span>
+</footer>
+
+<!-- Spotify Widget -->
+<div id="spotify-widget">
+  <button class="spotify-close" id="spotify-close">×</button>
+  <div class="spotify-header">
+    <svg viewBox="0 0 24 24">
+      <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+    </svg>
+    LISTENING TO SPOTIFY
+  </div>
+  <div class="spotify-content">
+    <img class="spotify-album-art" id="spotify-album-art" src="" alt="Album Art">
+    <div class="spotify-track-info">
+      <div class="spotify-track-name" id="spotify-track-name"></div>
+      <div class="spotify-artist-name" id="spotify-artist-name"></div>
+      <div class="spotify-context">
+        <span class="spotify-context-type" id="spotify-context-type"></span>
+        <span class="spotify-context-name" id="spotify-context-name"></span>
+      </div>
+    </div>
+  </div>
+  <div class="spotify-progress">
+    <div class="spotify-progress-bar" id="spotify-progress-bar"></div>
+  </div>
+  <div class="spotify-error" id="spotify-error"></div>
+</div>
+
+<script>
+const translations = {
+  en: {
+    title: "Where do you want to go?",
+    subtitle: "Select a destination to explore my profiles",
+    linktree: "Linktree",
+    gravatar: "Gravatar",
+    album: "Album",
+    copyright: "© kebaab.eu",
+    noscript: "JavaScript is disabled in your browser. Some features may not work, and further websites may load incorrectly.",
+    maintenance: "The website is under maintenance. Some pages may not work or work incorrectly."
+  },
+  cs: {
+    title: "Kam chcete jít?",
+    subtitle: "Vyberte si cíl pro prozkoumání mých profilů",
+    linktree: "Linktree",
+    gravatar: "Gravatar",
+    album: "Album",
+    copyright: "© kebaab.eu",
+    noscript: "JavaScript je ve vašem prohlížeči zakázán. Některé funkce nemusí fungovat a další weby se mohou načítat nesprávně.",
+    maintenance: "Web je v údržbě. Některé stránky nemusí fungovat nebo mohou fungovat nesprávně."
+  },
+  sk: {
+    title: "Kam chcete ísť?",
+    subtitle: "Vyberte si cieľ na preskúmanie mojich profilov",
+    linktree: "Linktree",
+    gravatar: "Gravatar",
+    album: "Album",
+    copyright: "© kebaab.eu",
+    noscript: "JavaScript je vo vašom prehliadači zakázaný. Niektoré funkcie nemusia fungovať a ďalšie weby sa môžu načítať nesprávne.",
+    maintenance: "Web je v údržbe. Niektoré stránky nemusia fungovať alebo môžu fungovať nesprávne."
+  },
+  de: {
+    title: "Wohin möchten Sie gehen?",
+    subtitle: "Wählen Sie ein Ziel, um meine Profile zu erkunden",
+    linktree: "Linktree",
+    gravatar: "Gravatar",
+    album: "Album",
+    copyright: "© kebaab.eu",
+    noscript: "JavaScript ist in Ihrem Browser deaktiviert. Einige Funktionen funktionieren möglicherweise nicht und weitere Websites könnten fehlerhaft geladen werden.",
+    maintenance: "Die Website wird gewartet. Einige Seiten funktionieren möglicherweise nicht oder nicht richtig."
+  },
+  ru: {
+    title: "Куда вы хотите пойти?",
+    subtitle: "Выберите пункт назначения для просмотра моих профилей",
+    linktree: "Линктре",
+    gravatar: "Граватар",
+    album: "Альбом",
+    copyright: "© kebaab.eu",
+    noscript: "JavaScript отключен в вашем браузере. Некоторые функции могут не работать, и последующие сайты могут загружаться неправильно.",
+    maintenance: "Сайт находится на техническом обслуживании. Некоторые страницы могут не работать или работать некорректно."
+  },
+  fr: {
+    title: "Où voulez-vous aller ?",
+    subtitle: "Sélectionnez une destination pour explorer mes profils",
+    linktree: "Linktree",
+    gravatar: "Gravatar",
+    album: "Album",
+    copyright: "© kebaab.eu",
+    noscript: "JavaScript est désactivé dans votre navigateur. Certaines fonctionnalités peuvent ne pas fonctionner and d'autres sites peuvent mal se charger.",
+    maintenance: "Le site est en maintenance. Certaines pages peuvent ne pas fonctionner ou fonctionner incorrectement."
+  },
+  ko: {
+    title: "어디로 가시겠습니까?",
+    subtitle: "내 프로필을 탐색할 대상을 선택하세요",
+    linktree: "링크트리",
+    gravatar: "그라바타",
+    album: "앨범",
+    copyright: "© kebaab.eu",
+    noscript: "브라우저에서 JavaScript가 비활성화되어 있습니다. 일부 기능이 작동하지 않을 수 있으며 다른 사이트가 잘못 로드될 수 있습니다.",
+    maintenance: "웹사이트가 유지보수 중입니다. 일부 페이지가 작동하지 않거나 올바르게 작동하지 않을 수 있습니다."
+  },
+  es: {
+    title: "¿A dónde quieres ir?",
+    subtitle: "Selecciona un destino para explorar mis perfiles",
+    linktree: "Linktree",
+    gravatar: "Gravatar",
+    album: "Álbum",
+    copyright: "© kebaab.eu",
+    noscript: "JavaScript está desactivado en tu navegador. Es posible que algunas funciones no funcionen and otros sitios se carguen incorrectamente.",
+    maintenance: "El sitio web está en mantenimiento. Es posible que algunas páginas no funcionen o funcionen incorrectamente."
+  },
+  ja: {
+    title: "どこに行きたいですか？",
+    subtitle: "プロフィールを探索する目的地を選択してください",
+    linktree: "リンクトリー",
+    gravatar: "グラバター",
+    album: "アルバム",
+    copyright: "© kebaab.eu",
+    noscript: "ブラウザでJavaScriptが無効になっています. 一部の機能が動作しない可能性があり、他のサイトが正しく読み込まれない場合があります.",
+    maintenance: "ウェブサイトはメンテナンス中です. 一部のページが機能しない、または正しく機能しない場合があります."
+  }
+};
+
+// DOM Elements
+const languageSwitcher = document.getElementById("languageSwitcher");
+const title = document.getElementById("title");
+const subtitle = document.getElementById("subtitle");
+const linktreeTranslation = document.getElementById("linktreeTranslation");
+const gravatarTranslation = document.getElementById("gravatarTranslation");
+const copyright = document.getElementById("copyright");
+const langIndicator = document.getElementById("langIndicator");
+const maintenanceWarning = document.getElementById("maintenanceWarning");
+
+// Spotify Widget Elements
+const spotifyWidget = document.getElementById('spotify-widget');
+const spotifyClose = document.getElementById('spotify-close');
+const albumArt = document.getElementById('spotify-album-art');
+const trackName = document.getElementById('spotify-track-name');
+const artistName = document.getElementById('spotify-artist-name');
+const contextType = document.getElementById('spotify-context-type');
+const contextName = document.getElementById('spotify-context-name');
+const progressBar = document.getElementById('spotify-progress-bar');
+const spotifyError = document.getElementById('spotify-error');
+
+// Set Slovak as default
+let currentLang = "sk";
+
+// Update UI with translations
+function updateLanguage(lang) {
+  if (translations[lang]) {
+    document.documentElement.lang = lang;
+    document.body.className = `lang-${lang}`;
+    title.textContent = translations[lang].title;
+    subtitle.textContent = translations[lang].subtitle;
+    
+    if (linktreeTranslation) linktreeTranslation.textContent = translations[lang].linktree;
+    if (gravatarTranslation) gravatarTranslation.textContent = translations[lang].gravatar;
+    
+    copyright.textContent = `${new Date().getFullYear()} ${translations[lang].copyright}`;
+    langIndicator.textContent = lang.toUpperCase();
+    
+    // Update language switcher
+    languageSwitcher.value = lang;
+    
+    // Update maintenance message if shown
+    if (maintenanceWarning.style.display === 'block') {
+      maintenanceWarning.textContent = translations[lang].maintenance;
+    }
+    
+    // Save preference
+    localStorage.setItem('preferredLang', lang);
+    
+    // Update current language
+    currentLang = lang;
+  }
+}
+
+// Check maintenance status
+async function checkMaintenanceStatus() {
+  try {
+    const response = await fetch('https://kebaab.eu/down.txt', {
+      cache: 'no-store' // Ensure we don't get a cached response
+    });
+    
+    if (response.ok) {
+      const text = await response.text();
+      if (text.trim() === 'true') {
+        // Show maintenance warning
+        maintenanceWarning.textContent = translations[currentLang].maintenance;
+        maintenanceWarning.style.display = 'block';
+      }
+    }
+  } catch (error) {
+    console.error('Failed to check maintenance status:', error);
+    // Don't show maintenance warning if the request fails
+  }
+}
+
+// Spotify Integration
+let pollInterval;
+
+// Check Spotify status using Netlify Function
+async function checkSpotifyStatus() {
+  try {
+    const response = await fetch('/.netlify/functions/spotify-now-playing');
+    
+    if (response.status === 401) {
+      showError('Spotify authentication failed. Please check your credentials.');
+      clearInterval(pollInterval);
+      return;
+    }
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      if (data.is_playing) {
+        updateWidget(data);
+        spotifyWidget.style.display = 'block';
+        spotifyError.style.display = 'none';
+      } else {
+        spotifyWidget.style.display = 'none';
+      }
+    } else {
+      showError(data.error || 'Failed to fetch Spotify data');
+    }
+  } catch (error) {
+    console.error('Error fetching Spotify status:', error);
+    spotifyWidget.style.display = 'none';
+  }
+}
+
+// Update the widget with current playback data
+function updateWidget(data) {
+  // Update track info
+  albumArt.src = data.item.album.images[0].url;
+  trackName.textContent = data.item.name;
+  artistName.textContent = data.item.artists.map(artist => artist.name).join(', ');
+  
+  // Update context (playlist, album, etc.)
+  if (data.context) {
+    const contextTypeText = data.context.type === 'playlist' ? 'Playlist' : 
+                          data.context.type === 'album' ? 'Album' : 
+                          data.context.type === 'artist' ? 'Artist' : 'Context';
+    contextType.textContent = contextTypeText + ': ';
+    
+    // In a real implementation, you would fetch the context name from the API
+    // For now, we'll just show a generic name
+    contextName.textContent = data.context.type === 'playlist' ? 'My Playlist' : 
+                            data.context.type === 'album' ? data.item.album.name : 
+                            data.context.type === 'artist' ? data.item.artists[0].name : 'Unknown';
+  } else {
+    contextType.textContent = '';
+    contextName.textContent = '';
+  }
+  
+  // Update progress bar
+  const progressPercent = (data.progress_ms / data.item.duration_ms) * 100;
+  progressBar.style.width = `${progressPercent}%`;
+}
+
+// Show error message
+function showError(message) {
+  spotifyError.textContent = message;
+  spotifyError.style.display = 'block';
+}
+
+// Close widget when X is clicked
+spotifyClose.addEventListener('click', function() {
+  spotifyWidget.style.display = 'none';
+});
+
+// Initialize
+function init() {
+  // Check for saved language preference or default to Slovak
+  const savedLang = localStorage.getItem('preferredLang');
+  if (savedLang && translations[savedLang]) {
+    updateLanguage(savedLang);
+  } else {
+    updateLanguage("sk"); // Default to Slovak
+  }
+  
+  // Set up language switcher
+  languageSwitcher.addEventListener("change", (e) => {
+    updateLanguage(e.target.value);
+  });
+  
+  // Check maintenance status
+  checkMaintenanceStatus();
+  
+  // Start polling for Spotify status
+  checkSpotifyStatus();
+  pollInterval = setInterval(checkSpotifyStatus, 10000); // Check every 10 seconds
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
