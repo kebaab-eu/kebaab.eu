@@ -352,12 +352,13 @@ noscript {
 #spotify-widget {
   width: 90%;
   max-width: 600px;
-  background: #2b2d31;
+  background: var(--card-bg);
   border-radius: 12px;
   padding: 16px;
   margin: 30px auto;
   border-left: 4px solid var(--spotify-green);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  text-align: left;
 }
 
 .spotify-header {
@@ -433,6 +434,13 @@ noscript {
   text-overflow: ellipsis;
   display: flex;
   align-items: center;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.spotify-context-name:hover {
+  color: var(--spotify-green);
+  text-decoration: underline;
 }
 
 .spotify-lock-icon {
@@ -563,7 +571,7 @@ noscript {
       <svg viewBox="0 0 24 24">
         <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
       </svg>
-      LISTENING TO SPOTIFY
+      <span id="spotify-header-text">LISTENING TO SPOTIFY</span>
     </div>
     <div class="spotify-content">
       <img class="spotify-album-art" id="spotify-album-art" src="" alt="Album Art">
@@ -572,7 +580,7 @@ noscript {
         <div class="spotify-artist-name" id="spotify-artist-name"></div>
         <div class="spotify-context">
           <span class="spotify-context-type" id="spotify-context-type"></span>
-          <span class="spotify-context-name" id="spotify-context-name"></span>
+          <a href="#" class="spotify-context-name" id="spotify-context-name" target="_blank"></a>
         </div>
       </div>
     </div>
@@ -598,7 +606,12 @@ const translations = {
     album: "Album",
     copyright: "© kebaab.eu",
     noscript: "JavaScript is disabled in your browser. Some features may not work, and further websites may load incorrectly.",
-    maintenance: "The website is under maintenance. Some pages may not work or work incorrectly."
+    maintenance: "The website is under maintenance. Some pages may not work or work incorrectly.",
+    listening: "LISTENING TO SPOTIFY",
+    playlist: "Playlist",
+    album: "Album",
+    artist: "Artist",
+    privatePlaylist: "Private Playlist"
   },
   cs: {
     title: "Kam chcete jít?",
@@ -608,7 +621,12 @@ const translations = {
     album: "Album",
     copyright: "© kebaab.eu",
     noscript: "JavaScript je ve vašem prohlížeči zakázán. Některé funkce nemusí fungovat a další weby se mohou načítat nesprávně.",
-    maintenance: "Web je v údržbě. Některé stránky nemusí fungovat nebo mohou fungovat nesprávně."
+    maintenance: "Web je v údržbě. Některé stránky nemusí fungovat nebo mohou fungovat nesprávně.",
+    listening: "POSLOUCHÁNÍ NA SPOTIFY",
+    playlist: "Playlist",
+    album: "Album",
+    artist: "Umělec",
+    privatePlaylist: "Soukromý playlist"
   },
   sk: {
     title: "Kam chcete ísť?",
@@ -618,7 +636,12 @@ const translations = {
     album: "Album",
     copyright: "© kebaab.eu",
     noscript: "JavaScript je vo vašom prehliadači zakázaný. Niektoré funkcie nemusia fungovať a ďalšie weby sa môžu načítať nesprávne.",
-    maintenance: "Web je v údržbe. Niektoré stránky nemusia fungovať alebo môžu fungovať nesprávne."
+    maintenance: "Web je v údržbe. Niektoré stránky nemusia fungovať alebo môžu fungovať nesprávne.",
+    listening: "POČÚVANIE NA SPOTIFY",
+    playlist: "Playlist",
+    album: "Album",
+    artist: "Umelec",
+    privatePlaylist: "Súkromný playlist"
   },
   de: {
     title: "Wohin möchten Sie gehen?",
@@ -628,7 +651,12 @@ const translations = {
     album: "Album",
     copyright: "© kebaab.eu",
     noscript: "JavaScript ist in Ihrem Browser deaktiviert. Einige Funktionen funktionieren möglicherweise nicht und weitere Websites könnten fehlerhaft geladen werden.",
-    maintenance: "Die Website wird gewartet. Einige Seiten funktionieren möglicherweise nicht oder nicht richtig."
+    maintenance: "Die Website wird gewartet. Einige Seiten funktionieren möglicherweise nicht oder nicht richtig.",
+    listening: "HÖRT AUF SPOTIFY",
+    playlist: "Playlist",
+    album: "Album",
+    artist: "Künstler",
+    privatePlaylist: "Private Playlist"
   },
   ru: {
     title: "Куда вы хотите пойти?",
@@ -638,7 +666,12 @@ const translations = {
     album: "Альбом",
     copyright: "© kebaab.eu",
     noscript: "JavaScript отключен в вашем браузере. Некоторые функции могут не работать, и последующие сайты могут загружаться неправильно.",
-    maintenance: "Сайт находится на техническом обслуживании. Некоторые страницы могут не работать или работать некорректно."
+    maintenance: "Сайт находится на техническом обслуживании. Некоторые страницы могут не работать или работать некорректно.",
+    listening: "СЛУШАЕТ SPOTIFY",
+    playlist: "Плейлист",
+    album: "Альбом",
+    artist: "Исполнитель",
+    privatePlaylist: "Приватный плейлист"
   },
   fr: {
     title: "Où voulez-vous aller ?",
@@ -648,7 +681,12 @@ const translations = {
     album: "Album",
     copyright: "© kebaab.eu",
     noscript: "JavaScript est désactivé dans votre navigateur. Certaines fonctionnalités peuvent ne pas fonctionner and d'autres sites peuvent mal se charger.",
-    maintenance: "Le site est en maintenance. Certaines pages peuvent ne pas fonctionner ou fonctionner incorrectement."
+    maintenance: "Le site est en maintenance. Certaines pages peuvent ne pas fonctionner ou fonctionner incorrectement.",
+    listening: "ÉCOUTE SUR SPOTIFY",
+    playlist: "Playlist",
+    album: "Album",
+    artist: "Artiste",
+    privatePlaylist: "Playlist privée"
   },
   ko: {
     title: "어디로 가시겠습니까?",
@@ -658,7 +696,12 @@ const translations = {
     album: "앨범",
     copyright: "© kebaab.eu",
     noscript: "브라우저에서 JavaScript가 비활성화되어 있습니다. 일부 기능이 작동하지 않을 수 있으며 다른 사이트가 잘못 로드될 수 있습니다.",
-    maintenance: "웹사이트가 유지보수 중입니다. 일부 페이지가 작동하지 않거나 올바르게 작동하지 않을 수 있습니다."
+    maintenance: "웹사이트가 유지보수 중입니다. 일부 페이지가 작동하지 않거나 올바르게 작동하지 않을 수 있습니다.",
+    listening: "스포티파이 재생 중",
+    playlist: "플레이리스트",
+    album: "앨범",
+    artist: "아티스트",
+    privatePlaylist: "비공개 플레이리스트"
   },
   es: {
     title: "¿A dónde quieres ir?",
@@ -668,7 +711,12 @@ const translations = {
     album: "Álbum",
     copyright: "© kebaab.eu",
     noscript: "JavaScript está desactivado en tu navegador. Es posible que algunas funciones no funcionen and otros sitios se carguen incorrectamente.",
-    maintenance: "El sitio web está en mantenimiento. Es posible que algunas páginas no funcionen o funcionen incorrectamente."
+    maintenance: "El sitio web está en mantenimiento. Es posible que algunas páginas no funcionen o funcionen incorrectamente.",
+    listening: "ESCUCHANDO EN SPOTIFY",
+    playlist: "Playlist",
+    album: "Álbum",
+    artist: "Artista",
+    privatePlaylist: "Lista privada"
   },
   ja: {
     title: "どこに行きたいですか？",
@@ -678,7 +726,12 @@ const translations = {
     album: "アルバム",
     copyright: "© kebaab.eu",
     noscript: "ブラウザでJavaScriptが無効になっています. 一部の機能が動作しない可能性があり、他のサイトが正しく読み込まれない場合があります.",
-    maintenance: "ウェブサイトはメンテナンス中です. 一部のページが機能しない、または正しく機能しない場合があります."
+    maintenance: "ウェブサイトはメンテナンス中です. 一部のページが機能しない、または正しく機能しない場合があります.",
+    listening: "SPOTIFYで再生中",
+    playlist: "プレイリスト",
+    album: "アルバム",
+    artist: "アーティスト",
+    privatePlaylist: "非公開プレイリスト"
   }
 };
 
@@ -703,6 +756,7 @@ const contextName = document.getElementById('spotify-context-name');
 const progressBar = document.getElementById('spotify-progress-bar');
 const spotifyError = document.getElementById('spotify-error');
 const spotifyDebug = document.getElementById('spotify-debug');
+const spotifyHeaderText = document.getElementById('spotify-header-text');
 
 // Set Slovak as default
 let currentLang = "sk";
@@ -720,6 +774,9 @@ function updateLanguage(lang) {
     
     copyright.textContent = `${new Date().getFullYear()} ${translations[lang].copyright}`;
     langIndicator.textContent = lang.toUpperCase();
+    
+    // Update Spotify header text
+    spotifyHeaderText.textContent = translations[lang].listening;
     
     // Update language switcher
     languageSwitcher.value = lang;
@@ -825,9 +882,9 @@ function updateWidget(data) {
   
   // Update context (playlist, album, etc.)
   if (data.context) {
-    const contextTypeText = data.context.type === 'playlist' ? 'Playlist' : 
-                          data.context.type === 'album' ? 'Album' : 
-                          data.context.type === 'artist' ? 'Artist' : 'Context';
+    const contextTypeText = data.context.type === 'playlist' ? translations[currentLang].playlist : 
+                          data.context.type === 'album' ? translations[currentLang].album : 
+                          data.context.type === 'artist' ? translations[currentLang].artist : 'Context';
     contextType.textContent = contextTypeText + ': ';
     
     // Check if playlist is private and show appropriate name
@@ -838,20 +895,26 @@ function updateWidget(data) {
                        (!data.context.name || data.context.name === 'My Playlist');
       
       if (isPrivate) {
-        contextName.innerHTML = 'Hidden Playlist <svg class="spotify-lock-icon" viewBox="0 0 24 24"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM8.9 6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H8.9V6z"></path></svg>';
+        contextName.innerHTML = translations[currentLang].privatePlaylist + ' <svg class="spotify-lock-icon" viewBox="0 0 24 24"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM8.9 6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H8.9V6z"></path></svg>';
+        contextName.href = "#";
       } else {
-        contextName.textContent = data.context.name || 'Playlist';
+        contextName.textContent = data.context.name || translations[currentLang].playlist;
+        contextName.href = data.context.external_urls.spotify || "#";
       }
     } else if (data.context.type === 'album') {
       contextName.textContent = data.item.album.name;
+      contextName.href = data.context.external_urls.spotify || "#";
     } else if (data.context.type === 'artist') {
       contextName.textContent = data.item.artists[0].name;
+      contextName.href = data.context.external_urls.spotify || "#";
     } else {
       contextName.textContent = 'Unknown';
+      contextName.href = "#";
     }
   } else {
     contextType.textContent = '';
     contextName.textContent = '';
+    contextName.href = "#";
   }
   
   // Update progress bar
@@ -898,7 +961,7 @@ function init() {
   
   // Start polling for Spotify status
   checkSpotifyStatus();
-  pollInterval = setInterval(checkSpotifyStatus, 10000); // Check every 10 seconds
+  pollInterval = setInterval(checkSpotifyStatus, 3000); // Check every 3 seconds
 }
 
 // Initialize when DOM is loaded
