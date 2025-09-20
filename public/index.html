@@ -532,7 +532,7 @@ noscript {
   <p class="subtitle" id="subtitle">Vyberte si cieľ na preskúmanie mojich profilov</p>
   
   <div class="choice">
-    <a class="card linktree" href="https://kebaab.eu/redirect/linktree">
+    <a class="card linktree" href="https://kebaab.eu/linktree">
       <img src="https://ugc.production.linktr.ee/a00ea38e-9545-44c1-a7f8-ea813ddae5d8_Screenshot-2025-09-06-12-10-34-58-680d03679600f7af0b4c700c6b270fe7.jpeg?io=true&amp;size=avatar-v3_0" alt="Linktree Profile Picture">
       <div class="card-label-container">
         <span class="official-name">Linktree</span>
@@ -540,7 +540,7 @@ noscript {
       </div>
     </a>
     
-    <a class="card gravatar" href="https://kebaab.eu/redirect/gravatar">
+    <a class="card gravatar" href="https://kebaab.eu/gravatar">
       <img src="https://1.gravatar.com/avatar/f696919be8b6c0df1813a948b1b7395e8c486adf13c837956b9e5a7119a93443?size=256&d=initials" alt="Gravatar Profile Picture">
       <div class="card-label-container">
         <span class="official-name">Gravatar</span>
@@ -553,7 +553,7 @@ noscript {
   <div id="spotify-widget" style="display: none;">
     <div class="spotify-header">
       <svg viewBox="0 0 24 24">
-        <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+        <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.极.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
       </svg>
       <span id="spotify-header-text">LISTENING TO SPOTIFY</span>
     </div>
@@ -694,8 +694,8 @@ const translations = {
     gravatar: "Gravatar",
     album: "Álbum",
     copyright: "© kebaab.eu",
-    noscript: "JavaScript está desactivado en tu navegador. Es posible que algunas funciones no funcionen and otros sitios se carguen incorrectamente.",
-    maintenance: "El sitio web está en mantenimiento. Es posible que algunas páginas no funcionen or funcionen incorrectamente.",
+    noscript: "JavaScript está desactivado en tu navegador. Es posible that algunas funciones no funcionen and otros sitios se carguen incorrectamente.",
+    maintenance: "El sitio web está en mantenimiento. Es posible that algunas páginas no funcionen or funcionen incorrectamente.",
     listening: "ESCUCHANDO EN SPOTIFY",
     playlist: "Playlist",
     album: "Álbum",
@@ -743,6 +743,8 @@ const spotifyHeaderText = document.getElementById('spotify-header-text');
 
 // Set Slovak as default
 let currentLang = "sk";
+let lastUpdateTime = 0;
+let progressInterval;
 
 // Update UI with translations
 function updateLanguage(lang) {
@@ -836,8 +838,15 @@ async function checkSpotifyStatus() {
         spotifyWidget.style.display = 'block';
         spotifyError.style.display = 'none';
         spotifyDebug.style.display = 'none';
+        
+        // Store the update time for client-side progress tracking
+        lastUpdateTime = Date.now();
+        
+        // Start client-side progress updates
+        startProgressTracking(data.progress_ms, data.item.duration_ms);
       } else {
         spotifyWidget.style.display = 'none';
+        clearInterval(progressInterval);
       }
     } else {
       showError(data.error || 'Failed to fetch Spotify data');
@@ -845,6 +854,7 @@ async function checkSpotifyStatus() {
   } catch (error) {
     console.error('Error fetching Spotify status:', error);
     spotifyWidget.style.display = 'none';
+    clearInterval(progressInterval);
     
     // More specific error handling
     if (error instanceof SyntaxError) {
@@ -870,36 +880,71 @@ function updateWidget(data) {
                           data.context.type === 'artist' ? translations[currentLang].artist : 'Context';
     contextType.textContent = contextTypeText + ': ';
     
-    // For Spotify API, context objects don't include name in the basic response
-    // We need to determine if it's private based on the URI pattern
-    if (data.context.type === 'playlist') {
-      // Check if it's a personal playlist (usually private)
-      // Spotify personal playlists have a specific URI pattern
-      const isPersonalPlaylist = data.context.uri.includes('spotify:user:') && 
-                                data.context.uri.includes('playlist:');
-      
-      if (isPersonalPlaylist) {
-        contextName.innerHTML = translations[currentLang].privatePlaylist + ' <svg class="spotify-lock-icon" viewBox="0 0 24 24"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM8.9 6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H8.9V6z"></path></svg>';
+    // Check if we have playlist details from the enhanced API
+    if (data.context.type === 'playlist' && data.context.name) {
+      if (data.context.public === false) {
+        contextName.innerHTML = translations[currentLang].privatePlaylist + ' <svg class="spotify-lock-icon" viewBox="0 0 24 24"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM8.9 6c0-1.71 1.39-3.1 3.1-极.1s3.1 1.39 3.1 3.1v2H8.9V6z"></path></svg>';
       } else {
-        // For public playlists, we can try to extract the name from the URI
-        // or just show a generic name
-        contextName.textContent = translations[currentLang].playlist;
+        contextName.textContent = data.context.name;
+        if (data.context.external_url) {
+          contextName.href = data.context.external_url;
+          contextName.target = "_blank";
+          contextName.classList.add("public");
+        }
       }
     } else if (data.context.type === 'album') {
       contextName.textContent = data.item.album.name;
+      if (data.context.external_urls && data.context.external_urls.spotify) {
+        contextName.href = data.context.external_urls.spotify;
+        contextName.target = "_blank";
+        contextName.classList.add("public");
+      }
     } else if (data.context.type === 'artist') {
       contextName.textContent = data.item.artists[0].name;
+      if (data.context.external_urls && data.context.external_urls.spotify) {
+        contextName.href = data.context.external_urls.spotify;
+        contextName.target = "_blank";
+        contextName.classList.add("public");
+      }
     } else {
       contextName.textContent = 'Unknown';
+      contextName.href = "#";
+      contextName.classList.remove("public");
     }
   } else {
     contextType.textContent = '';
     contextName.textContent = '';
+    contextName.href = "#";
+    contextName.classList.remove("public");
   }
   
   // Update progress bar
   const progressPercent = (data.progress_ms / data.item.duration_ms) * 100;
   progressBar.style.width = `${progressPercent}%`;
+}
+
+// Start client-side progress tracking
+function startProgressTracking(progressMs, durationMs) {
+  clearInterval(progressInterval);
+  
+  const startTime = Date.now();
+  const startProgress = progressMs;
+  const duration = durationMs;
+  
+  progressInterval = setInterval(() => {
+    const elapsed = Date.now() - startTime;
+    const currentProgress = startProgress + elapsed;
+    
+    if (currentProgress >= duration) {
+      clearInterval(progressInterval);
+      progressBar.style.width = '100%';
+      // Schedule a refresh when the song ends
+      setTimeout(checkSpotifyStatus, 2000);
+    } else {
+      const progressPercent = (currentProgress / duration) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+    }
+  }, 1000);
 }
 
 // Show error message
@@ -935,7 +980,7 @@ function init() {
   
   // Start polling for Spotify status
   checkSpotifyStatus();
-  pollInterval = setInterval(checkSpotifyStatus, 3000); // Check every 3 seconds
+  pollInterval = setInterval(checkSpotifyStatus, 30000); // Check every 30 seconds
 }
 
 // Initialize when DOM is loaded
