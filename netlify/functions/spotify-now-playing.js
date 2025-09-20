@@ -60,13 +60,41 @@ exports.handler = async function(event, context) {
     );
     
     if (playbackResponse.status === 200) {
+      // Get additional context information if available
+      let enhancedData = playbackResponse.data;
+      
+      if (enhancedData.context && enhancedData.context.type === 'playlist') {
+        try {
+          // Extract playlist ID from URI
+          const playlistId = enhancedData.context.uri.split(':')[2];
+          
+          // Get playlist details
+          const playlistResponse = await axios.get(
+            `https://api.spotify.com/v1/playlists/${playlistId}`,
+            {
+              headers: {
+                'Authorization': `Bearer ${accessToken}`
+              }
+            }
+          );
+          
+          // Add playlist info to response
+          enhancedData.context.name = playlistResponse.data.name;
+          enhancedData.context.public = playlistResponse.data.public;
+          enhancedData.context.external_url = playlistResponse.data.external_urls.spotify;
+        } catch (error) {
+          console.error('Error fetching playlist details:', error.message);
+          // Continue without playlist details if there's an error
+        }
+      }
+      
       return {
         statusCode: 200,
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*'
         },
-        body: JSON.stringify(playbackResponse.data)
+        body: JSON.stringify(enhancedData)
       };
     } else {
       return {
