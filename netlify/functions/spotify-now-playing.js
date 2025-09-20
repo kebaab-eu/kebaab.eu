@@ -1,48 +1,107 @@
-// Spotify Integration
-let pollInterval;
+const axios = require('axios');
 
-// Check Spotify status using Netlify Function
-async function checkSpotifyStatus() {
+exports.handler = async function(event, context) {
+  // Get environment variables
+  const { 
+    SPOTIFY_CLIENT_ID, 
+    SPOTIFY_CLIENT_SECRET, 
+    SPOTIFY_REFRESH_TOKEN 
+  } = process.env;
+  
+  // Debug logging (will appear in Netlify function logs)
+  console.log('Function invoked');
+  console.log('Environment variables present:', {
+    hasClientId: !!SPOTIFY_CLIENT_ID,
+    hasClientSecret: !!SPOTIFY_CLIENT_SECRET,
+    hasRefreshToken: !!SPOTIFY_REFRESH_TOKEN
+  });
+  
+  if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET || !SPOTIFY_REFRESH_TOKEN) {
+    console.error('Missing Spotify environment variables');
+    return {
+      statusCode: 500,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({ 
+        error: 'Missing Spotify environment variables',
+        details: 'Check that all required environment variables are set in Netlify'
+      })
+    };
+  }
+  
   try {
-    const response = await fetch('/.netlify/functions/spotify-now-playing');
-    
-    // Check if response is HTML (error page) instead of JSON
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.indexOf('text/html') !== -1) {
-      // This is an HTML error page, not JSON
-      showError('Spotify function not available');
-      clearInterval(pollInterval);
-      return;
-    }
-    
-    if (response.status === 401) {
-      showError('Spotify authentication failed. Please check your credentials.');
-      clearInterval(pollInterval);
-      return;
-    }
-    
-    const data = await response.json();
-    
-    if (response.ok) {
-      if (data.is_playing) {
-        updateWidget(data);
-        spotifyWidget.style.display = 'block';
-        spotifyError.style.display = 'none';
-      } else {
-        spotifyWidget.style.display = 'none';
+    // Get access token using refresh token
+    const authResponse = await axios.post(
+      'https://accounts.spotify.com/api/token',
+      new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: SPOTIFY_REFRESH_TOKEN
+      }),
+      {
+        headers: {
+          'Authorization': 'Basic ' + Buffer.from(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET).toString('base64'),
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
       }
+    );
+    
+    const accessToken = authResponse.data.access_token;
+    
+    // Get current playback
+    const playbackResponse = await axios.get(
+      'https://api.spotify.com/v1/me/player/currently-playing',
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      }
+    );
+    
+    if (playbackResponse.status === 200) {
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify(playbackResponse.data)
+      };
     } else {
-      showError(data.error || 'Failed to fetch Spotify data');
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({ is_playing: false })
+      };
     }
   } catch (error) {
-    console.error('Error fetching Spotify status:', error);
-    spotifyWidget.style.display = 'none';
+    console.error('Spotify API error:', error.response?.data || error.message);
     
-    // More specific error handling
-    if (error instanceof SyntaxError) {
-      showError('Received invalid response from server');
-    } else {
-      showError('Network error - could not connect to Spotify service');
+    if (error.response?.status === 401) {
+      return {
+        statusCode: 401,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({ error: 'Authentication failed' })
+      };
     }
+    
+    return {
+      statusCode: 500,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({ 
+        error: 'Failed to fetch Spotify data',
+        details: error.message 
+      })
+    };
   }
-}
+};
