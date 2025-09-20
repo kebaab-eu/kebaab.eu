@@ -1,16 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Redirecting…</title>
-  <!-- Meta refresh for non-JS users -->
-  <meta http-equiv="refresh" content="0;url=https://open.spotify.com/track/2HRgqmZQC0MC7GeNuDIXHN">
-  <!-- JS redirect for faster navigation -->
-  <script>
-    location.replace("https://open.spotify.com/track/2HRgqmZQC0MC7GeNuDIXHN");
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirect to example.com</title>
+    <script>
+        // Configuration
+        const targetUrl = "https://open.spotify.com/track/2HRgqmZQC0MC7GeNuDIXHN"; // TARGET URL
+        
+        // Extract domain for display
+        const urlObj = new URL(targetUrl);
+        const displayDomain = urlObj.hostname;
+        
+        // Update page title with domain
+        document.title = "Redirect to " + displayDomain;
+        
+        // Instant redirect
+        window.location.replace(targetUrl);
+    </script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        .redirect-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .domain {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 1rem 0;
+            word-break: break-all;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-  <p>Redirecting… If you are not redirected, <a href="https://open.spotify.com/track/2HRgqmZQC0MC7GeNuDIXHN">click here</a>.</p>
+    <div class="redirect-card">
+        <div class="spinner"></div>
+        <p>Redirecting to:</p>
+        <div class="domain" id="domainDisplay"></div>
+        <p>If you are not redirected automatically, <a href="#" id="manualLink">click here</a>.</p>
+    </div>
+
+    <script>
+        // Display the domain for bots and users with JS disabled
+        document.getElementById('domainDisplay').textContent = displayDomain;
+        document.getElementById('manualLink').href = targetUrl;
+        
+        // Meta refresh for browsers that don't execute JS
+        document.write('<meta http-equiv="refresh" content="0; url=' + targetUrl + '">');
+    </script>
 </body>
 </html>
