@@ -1,72 +1,48 @@
-const axios = require('axios');
+// Spotify Integration
+let pollInterval;
 
-exports.handler = async function(event, context) {
-  // Get environment variables
-  const { 
-    SPOTIFY_CLIENT_ID, 
-    SPOTIFY_CLIENT_SECRET, 
-    SPOTIFY_REFRESH_TOKEN 
-  } = process.env;
-  
-  if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET || !SPOTIFY_REFRESH_TOKEN) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Missing Spotify environment variables' })
-    };
-  }
-  
+// Check Spotify status using Netlify Function
+async function checkSpotifyStatus() {
   try {
-    // Get access token using refresh token
-    const authResponse = await axios.post(
-      'https://accounts.spotify.com/api/token',
-      new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: SPOTIFY_REFRESH_TOKEN
-      }),
-      {
-        headers: {
-          'Authorization': 'Basic ' + Buffer.from(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET).toString('base64'),
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
+    const response = await fetch('/.netlify/functions/spotify-now-playing');
+    
+    // Check if response is HTML (error page) instead of JSON
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.indexOf('text/html') !== -1) {
+      // This is an HTML error page, not JSON
+      showError('Spotify function not available');
+      clearInterval(pollInterval);
+      return;
+    }
+    
+    if (response.status === 401) {
+      showError('Spotify authentication failed. Please check your credentials.');
+      clearInterval(pollInterval);
+      return;
+    }
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      if (data.is_playing) {
+        updateWidget(data);
+        spotifyWidget.style.display = 'block';
+        spotifyError.style.display = 'none';
+      } else {
+        spotifyWidget.style.display = 'none';
       }
-    );
-    
-    const accessToken = authResponse.data.access_token;
-    
-    // Get current playback
-    const playbackResponse = await axios.get(
-      'https://api.spotify.com/v1/me/player/currently-playing',
-      {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
-        }
-      }
-    );
-    
-    if (playbackResponse.status === 200) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify(playbackResponse.data)
-      };
     } else {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ is_playing: false })
-      };
+      showError(data.error || 'Failed to fetch Spotify data');
     }
   } catch (error) {
-    console.error('Spotify API error:', error.response?.data || error.message);
+    console.error('Error fetching Spotify status:', error);
+    spotifyWidget.style.display = 'none';
     
-    if (error.response?.status === 401) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({ error: 'Authentication failed' })
-      };
+    // More specific error handling
+    if (error instanceof SyntaxError) {
+      showError('Received invalid response from server');
+    } else {
+      showError('Network error - could not connect to Spotify service');
     }
-    
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to fetch Spotify data' })
-    };
   }
-};
+}
