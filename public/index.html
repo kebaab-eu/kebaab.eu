@@ -438,7 +438,7 @@ noscript {
   transition: color 0.2s;
 }
 
-.spotify-context-name:hover {
+.spotify-context-name.public:hover {
   color: var(--spotify-green);
   text-decoration: underline;
 }
@@ -464,21 +464,6 @@ noscript {
   border-radius: 3px;
   width: 0%;
   transition: width 1s linear;
-}
-
-.spotify-close {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: none;
-  border: none;
-  color: #72767d;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.spotify-close:hover {
-  color: white;
 }
 
 .spotify-error {
@@ -566,7 +551,6 @@ noscript {
   
   <!-- Spotify Widget - Moved to be part of the main content -->
   <div id="spotify-widget" style="display: none;">
-    <button class="spotify-close" id="spotify-close">×</button>
     <div class="spotify-header">
       <svg viewBox="0 0 24 24">
         <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
@@ -580,7 +564,7 @@ noscript {
         <div class="spotify-artist-name" id="spotify-artist-name"></div>
         <div class="spotify-context">
           <span class="spotify-context-type" id="spotify-context-type"></span>
-          <a href="#" class="spotify-context-name" id="spotify-context-name" target="_blank"></a>
+          <span class="spotify-context-name" id="spotify-context-name"></span>
         </div>
       </div>
     </div>
@@ -711,7 +695,7 @@ const translations = {
     album: "Álbum",
     copyright: "© kebaab.eu",
     noscript: "JavaScript está desactivado en tu navegador. Es posible que algunas funciones no funcionen and otros sitios se carguen incorrectamente.",
-    maintenance: "El sitio web está en mantenimiento. Es posible que algunas páginas no funcionen o funcionen incorrectamente.",
+    maintenance: "El sitio web está en mantenimiento. Es posible que algunas páginas no funcionen or funcionen incorrectamente.",
     listening: "ESCUCHANDO EN SPOTIFY",
     playlist: "Playlist",
     album: "Álbum",
@@ -747,7 +731,6 @@ const maintenanceWarning = document.getElementById("maintenanceWarning");
 
 // Spotify Widget Elements
 const spotifyWidget = document.getElementById('spotify-widget');
-const spotifyClose = document.getElementById('spotify-close');
 const albumArt = document.getElementById('spotify-album-art');
 const trackName = document.getElementById('spotify-track-name');
 const artistName = document.getElementById('spotify-artist-name');
@@ -887,34 +870,31 @@ function updateWidget(data) {
                           data.context.type === 'artist' ? translations[currentLang].artist : 'Context';
     contextType.textContent = contextTypeText + ': ';
     
-    // Check if playlist is private and show appropriate name
+    // For Spotify API, context objects don't include name in the basic response
+    // We need to determine if it's private based on the URI pattern
     if (data.context.type === 'playlist') {
-      // This would need to be implemented in your Netlify function
-      // For now, we'll check if the playlist name is "My Playlist" and assume it's private
-      const isPrivate = data.context.uri && data.context.uri.includes('playlist') && 
-                       (!data.context.name || data.context.name === 'My Playlist');
+      // Check if it's a personal playlist (usually private)
+      // Spotify personal playlists have a specific URI pattern
+      const isPersonalPlaylist = data.context.uri.includes('spotify:user:') && 
+                                data.context.uri.includes('playlist:');
       
-      if (isPrivate) {
+      if (isPersonalPlaylist) {
         contextName.innerHTML = translations[currentLang].privatePlaylist + ' <svg class="spotify-lock-icon" viewBox="0 0 24 24"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM8.9 6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H8.9V6z"></path></svg>';
-        contextName.href = "#";
       } else {
-        contextName.textContent = data.context.name || translations[currentLang].playlist;
-        contextName.href = data.context.external_urls.spotify || "#";
+        // For public playlists, we can try to extract the name from the URI
+        // or just show a generic name
+        contextName.textContent = translations[currentLang].playlist;
       }
     } else if (data.context.type === 'album') {
       contextName.textContent = data.item.album.name;
-      contextName.href = data.context.external_urls.spotify || "#";
     } else if (data.context.type === 'artist') {
       contextName.textContent = data.item.artists[0].name;
-      contextName.href = data.context.external_urls.spotify || "#";
     } else {
       contextName.textContent = 'Unknown';
-      contextName.href = "#";
     }
   } else {
     contextType.textContent = '';
     contextName.textContent = '';
-    contextName.href = "#";
   }
   
   // Update progress bar
@@ -934,12 +914,6 @@ function showDebugInfo(info) {
   spotifyDebug.textContent = info;
   spotifyDebug.style.display = 'block';
 }
-
-// Close widget when X is clicked
-spotifyClose.addEventListener('click', function() {
-  spotifyWidget.style.display = 'none';
-  clearInterval(pollInterval);
-});
 
 // Initialize
 function init() {
