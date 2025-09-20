@@ -94,7 +94,7 @@ h1 {
 }
 
 /* Card Container */
-choice {
+.choice {
   display: flex;
   gap: 40px;
   flex-wrap: wrap;
@@ -142,7 +142,7 @@ choice {
   transition: opacity 0.3s ease;
 }
 
-/* ==== Linktree specific overrides (same behavior, just green) ==== */
+/* Linktree specific overrides */
 .card.linktree::after {
   background: var(--accent-green);
 }
@@ -156,7 +156,7 @@ choice {
   color: var(--accent-green);
 }
 
-/* ==== Gravatar specific overrides (same behavior, just green) ==== */
+/* Gravatar specific overrides */
 .card.gravatar::after {
   background: var(--accent-blue);
 }
@@ -473,6 +473,14 @@ noscript {
   display: none;
 }
 
+.spotify-debug {
+  color: #888;
+  font-size: 10px;
+  margin-top: 8px;
+  display: none;
+  font-family: monospace;
+}
+
 @media (max-width: 768px) {
   #spotify-widget {
     bottom: 10px;
@@ -559,6 +567,7 @@ noscript {
     <div class="spotify-progress-bar" id="spotify-progress-bar"></div>
   </div>
   <div class="spotify-error" id="spotify-error"></div>
+  <div class="spotify-debug" id="spotify-debug"></div>
 </div>
 
 <script>
@@ -675,6 +684,7 @@ const contextType = document.getElementById('spotify-context-type');
 const contextName = document.getElementById('spotify-context-name');
 const progressBar = document.getElementById('spotify-progress-bar');
 const spotifyError = document.getElementById('spotify-error');
+const spotifyDebug = document.getElementById('spotify-debug');
 
 // Set Slovak as default
 let currentLang = "sk";
@@ -738,8 +748,24 @@ async function checkSpotifyStatus() {
   try {
     const response = await fetch('/.netlify/functions/spotify-now-playing');
     
+    // Check if response is HTML (error page) instead of JSON
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.indexOf('text/html') !== -1) {
+      showError('Spotify function not available. Check if function is deployed correctly.');
+      showDebugInfo('Received HTML instead of JSON. Function might not be deployed.');
+      clearInterval(pollInterval);
+      return;
+    }
+    
     if (response.status === 401) {
       showError('Spotify authentication failed. Please check your credentials.');
+      clearInterval(pollInterval);
+      return;
+    }
+    
+    if (response.status === 404) {
+      showError('Spotify function not found (404). Check function path and deployment.');
+      showDebugInfo('Function path: /.netlify/functions/spotify-now-playing');
       clearInterval(pollInterval);
       return;
     }
@@ -751,6 +777,7 @@ async function checkSpotifyStatus() {
         updateWidget(data);
         spotifyWidget.style.display = 'block';
         spotifyError.style.display = 'none';
+        spotifyDebug.style.display = 'none';
       } else {
         spotifyWidget.style.display = 'none';
       }
@@ -760,6 +787,14 @@ async function checkSpotifyStatus() {
   } catch (error) {
     console.error('Error fetching Spotify status:', error);
     spotifyWidget.style.display = 'none';
+    
+    // More specific error handling
+    if (error instanceof SyntaxError) {
+      showError('Received invalid response from server. Function might not be deployed correctly.');
+      showDebugInfo('SyntaxError: ' + error.message);
+    } else {
+      showError('Network error - could not connect to Spotify service');
+    }
   }
 }
 
@@ -796,11 +831,19 @@ function updateWidget(data) {
 function showError(message) {
   spotifyError.textContent = message;
   spotifyError.style.display = 'block';
+  spotifyWidget.style.display = 'block';
+}
+
+// Show debug info
+function showDebugInfo(info) {
+  spotifyDebug.textContent = info;
+  spotifyDebug.style.display = 'block';
 }
 
 // Close widget when X is clicked
 spotifyClose.addEventListener('click', function() {
   spotifyWidget.style.display = 'none';
+  clearInterval(pollInterval);
 });
 
 // Initialize
