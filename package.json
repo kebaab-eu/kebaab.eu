@@ -1,0 +1,12 @@
+{
+  "name": "kebaab-eu",
+  "version": "1.0.0",
+  "description": "Personal website with Spotify integration",
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
