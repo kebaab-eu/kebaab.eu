@@ -19,3 +19,9 @@
 
 /admin/host  https://github.com/kebaab-eu/kebaab.eu/tree/main 301
 /admin/build https://app.netlify.com/projects/kebaab/overview 301
+
+/nemecko      https://gitlab.com/verygoodvetr/media/-/raw/main/Augsburg_promo_2024.mp4 200
+/nemecko/2024 https://gitlab.com/verygoodvetr/media/-/raw/main/Augsburg_promo_2024.mp4 200
+/deutschland  /nemecko                                                                 301
+/ausburg      /nemecko                                                                 301
+/ausburg/2024 /nemecko/2024                                                            301
