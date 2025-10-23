@@ -15,12 +15,10 @@
 /bio/huby     https://1drv.ms/p/c/ea935ffc8e3319c3/EdzWds6Ks2xNqj93ZZWr9QgB0f-IJl9XUf78CZpE-6eJAQ 301
 /bio/rastliny https://1drv.ms/p/c/ea935ffc8e3319c3/EUq1Hta5HtFKrsVVuswR-aMB6qq4_Vvvp8ulEjn5WBFWtQ 301
 
-/bio/testy/huby-bakterie https://1drv.ms/w/c/ea935ffc8e3319c3/ETwr0G8YactEsYTnY-pWjj8Be8Y24Q5_tGSv1veixFRdbg 301
-
 /admin/host  https://github.com/kebaab-eu/kebaab.eu/tree/main 301
 /admin/build https://app.netlify.com/projects/kebaab/overview 301
 
-/nemecko      https://gitlab.com/verygoodvetr/media/-/raw/main/Augsburg_promo_2024.mp4 200
+/nemecko      /nemecko/2024                                                            200
 /nemecko/2024 https://gitlab.com/verygoodvetr/media/-/raw/main/Augsburg_promo_2024.mp4 200
 /deutschland  /nemecko                                                                 301
 /ausburg      /nemecko                                                                 301
