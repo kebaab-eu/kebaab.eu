@@ -12,10 +12,6 @@
 /f/1 https://dynamic-media-cdn.tripadvisor.com/media/photo-o/31/3b/3d/ac/caption.jpg?w=600&h=-1&s=1  200
 /f/2 https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2a/b8/f6/4b/caption.jpg?w=1000&h=-1&s=1 200
 
-/bio/bakterie https://1drv.ms/p/c/ea935ffc8e3319c3/ETSzXZbldvxBjUgrCpn6_ykBuzcXZUT-bJaxHkiVh54D_Q 301
-/bio/huby     https://1drv.ms/p/c/ea935ffc8e3319c3/EdzWds6Ks2xNqj93ZZWr9QgB0f-IJl9XUf78CZpE-6eJAQ 301
-/bio/rastliny https://1drv.ms/p/c/ea935ffc8e3319c3/EUq1Hta5HtFKrsVVuswR-aMB6qq4_Vvvp8ulEjn5WBFWtQ 301
-
 /admin/host  https://github.com/kebaab-eu/kebaab.eu/tree/main 301
 /admin/build https://app.netlify.com/projects/kebaab/overview 301
 
@@ -24,5 +20,3 @@
 /deutschland  /nemecko                                                                 301
 /ausburg      /nemecko                                                                 301
 /ausburg/2024 /nemecko/2024                                                            301
-
-/totojestrasnesupersongapomoc https://www.youtube.com/watch?v=39UDZMgPg5k 302
