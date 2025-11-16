@@ -15,5 +15,4 @@
 /admin/host  https://github.com/kebaab-eu/kebaab.eu/tree/main 301
 /admin/build https://app.netlify.com/projects/kebaab/overview 301
 
-/s https://gitlab.com/verygoodvetr/media/-/raw/31d3770ab74405479ffa38cfe32ab0090121d4d1/Lucie_B%C3%ADl%C3%A1_-_Boty_od_Louis_Vuittona__UK_Drill_tiktok_remix__-_Majklos_Beats__1080p__h264_.mp4 200
-/a https://gitlab.com/verygoodvetr/media/-/raw/31d3770ab74405479ffa38cfe32ab0090121d4d1/Lucie_B%C3%ADl%C3%A1_-_Boty_od_Louis_Vuittona__UK_Drill_tiktok_remix__-_Majklos_Beats__1080p__h264_.mp4 302
+/* https://gitlab.com/verygoodvetr/media/-/raw/31d3770ab74405479ffa38cfe32ab0090121d4d1/Lucie_B%C3%ADl%C3%A1_-_Boty_od_Louis_Vuittona__UK_Drill_tiktok_remix__-_Majklos_Beats__1080p__h264_.mp4 200
