@@ -14,5 +14,3 @@
 
 /admin/host  https://github.com/kebaab-eu/kebaab.eu/tree/main 301
 /admin/build https://app.netlify.com/projects/kebaab/overview 301
-
-/* /luciebiladekujuti 200
