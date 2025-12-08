@@ -1,22 +1,19 @@
-/   https://samuelcapay.carrd.co    301
-/en https://samuelcapay-en.carrd.co 301
-/sk https://samuelcapay.carrd.co    301
+/    https://samuelcapay.carrd.co     301
+/en  https://samuelcapay-en.carrd.co  301
+/sk  https://samuelcapay.carrd.co     301
 
-/linktree     https://linktr.ee/samuelcapay                            301
-/gravatar     https://gravatar.com/loudlyfbcd085e11                    301
-/fico         https://robofico.sk                                      301
-/onlyfans     https://onlyfans.kebaab.eu                               301
-/seven        https://open.spotify.com/track/2HRgqmZQC0MC7GeNuDIXHN    301
-/sladkemameni https://open.spotify.com/track/4smQDHfo917EsE9KqJVQT7    301
-/favsong      https://open.spotify.com/track/1KuNhOubescxn3xD6WNI7Q    302
-/christmas25  https://open.spotify.com/playlist/5OP7itTh52BMfZS1DJrdlv 301
-/usa          https://www.youtube.com/watch?v=3fKNf5dLA_M              301
+/linktree  https://linktr.ee/samuelcapay                          301
+/gravatar  https://gravatar.com/loudlyfbcd085e11                  301
+/fico      https://robofico.sk                                    301
+/onlyfans  https://onlyfans.kebaab.eu                             301
+/favsong   https://open.spotify.com/track/1KuNhOubescxn3xD6WNI7Q  302
+/usa       https://www.youtube.com/watch?v=3fKNf5dLA_M            301
 
-/lit /media/Hravá%20literatúra%208%20-%20MP%20a%20Riešenia-compressed.pdf 200
-/sjl /media/Hravá%20slovenčina%208%20iŠVP%20-%20RIEŠENIA.pdf              200
+/lit  /media/Hravá%20literatúra%208%20-%20MP%20a%20Riešenia-compressed.pdf  200
+/sjl  /media/Hravá%20slovenčina%208%20iŠVP%20-%20RIEŠENIA.pdf               200
 
-/f/1 https://dynamic-media-cdn.tripadvisor.com/media/photo-o/31/3b/3d/ac/caption.jpg?w=600&h=-1&s=1  200
-/f/2 https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2a/b8/f6/4b/caption.jpg?w=1000&h=-1&s=1 200
+/f/1  https://dynamic-media-cdn.tripadvisor.com/media/photo-o/31/3b/3d/ac/caption.jpg?w=600&h=-1&s=1   200
+/f/2  https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2a/b8/f6/4b/caption.jpg?w=1000&h=-1&s=1  200
 
-/admin/host  https://github.com/kebaab-eu/kebaab.eu/tree/main 301
-/admin/build https://app.netlify.com/projects/kebaab/overview 301
+/admin/host   https://github.com/kebaab-eu/kebaab.eu/tree/main  301
+/admin/build  https://app.netlify.com/projects/kebaab/overview  301
