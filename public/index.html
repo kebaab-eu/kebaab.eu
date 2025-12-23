@@ -105,8 +105,19 @@
             document.cookie = `language=${lang}; expires=${expires.toUTCString()}; path=/`;
         }
 
+        // Check if redirect is disabled via URL parameter
+        function isRedirectDisabled() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('redirect') === 'disable';
+        }
+
         // Check if language cookie exists and redirect automatically
         function checkLanguageCookie() {
+            // Don't redirect if ?redirect=disable is in the URL
+            if (isRedirectDisabled()) {
+                return;
+            }
+
             const cookies = document.cookie.split(';');
             for (let cookie of cookies) {
                 const [name, value] = cookie.trim().split('=');
@@ -120,8 +131,8 @@
             }
         }
 
-        // comment the line below if you don't want automatic redirect on return visits
-        checkLanguageCookie();
+        // Uncomment the line below if you want automatic redirect on return visits
+        // checkLanguageCookie();
     </script>
 </body>
 </html>
